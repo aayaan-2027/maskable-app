@@ -88,6 +88,8 @@ html, body {
 
 @media (max-width: 700px) {
   .layout { padding: 40px 20px; }
+  .review-layout { grid-template-columns: 1fr; }
+  .review-sidebar { position: static; }
 }
 
 .step { animation: fade-in 0.25s ease; }
@@ -173,13 +175,25 @@ html, body {
   gap: 8px;
 }
 
+.review-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 2.2fr) minmax(220px, 0.8fr);
+  gap: 20px;
+  align-items: start;
+}
+
 .preview-wrapper {
-  margin: 20px 0 32px;
+  margin: 0 0 24px;
 }
 
 .preview-container {
   display: grid;
   gap: 16px;
+}
+
+.review-sidebar {
+  position: sticky;
+  top: 20px;
 }
 
 .preview-page {
@@ -307,19 +321,15 @@ html, body {
   gap: 12px;
   flex-wrap: wrap;
   align-items: center;
-  margin: 0 0 20px;
 }
 
-.review-actions--top {
-  margin: 0 0 24px;
-  padding: 12px;
+.review-actions--stack {
+  flex-direction: column;
+  align-items: stretch;
+  padding: 14px;
   border: 1px solid var(--border);
-  border-radius: 10px;
+  border-radius: 12px;
   background: var(--surface);
-}
-
-.review-actions--bottom {
-  margin-top: 8px;
 }
 
 .btn-secondary--small {
@@ -363,6 +373,12 @@ html, body {
   font-size: 14px;
   cursor: pointer;
   transition: border-color 0.15s ease, color 0.15s ease;
+}
+
+.btn-icon {
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 600;
 }
 
 .btn-secondary:hover { border-color: var(--accent-dim); color: var(--text); }

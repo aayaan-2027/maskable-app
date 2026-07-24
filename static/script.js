@@ -84,8 +84,8 @@
   // ---------- step 2: render detected field groups ----------
   function renderGroups(data) {
     reviewSubhead.textContent = data.num_pages
-      ? `${data.num_pages} page(s) scanned. Select fields directly in the preview — click the highlighted areas you want to mask.`
-      : "Select fields directly in the preview — click the highlighted areas you want to mask.";
+      ? `${data.num_pages} page(s) scanned. Draw a box on the preview to create a custom redaction.`
+      : "Draw a box on the preview to create a custom redaction.";
   }
 
   function truncate(s, n = 42) {
@@ -98,9 +98,6 @@
     if (!previewContainer) return;
     previewContainer.innerHTML = "";
     const previews = data.page_previews || [];
-    const groups = data.groups || [];
-    const groupToInstanceIds = {};
-    const instanceToGroup = {};
     if (!previews.length) return;
 
     for (let pageIndex = 0; pageIndex < previews.length; pageIndex++) {
@@ -112,44 +109,8 @@
       img.className = "preview-image";
       img.src = src;
       pageEl.appendChild(img);
-
-      img.addEventListener("load", () => {
-        const scale = img.clientWidth / img.naturalWidth || 1;
-        for (const g of groups) {
-          const bboxes = g.bboxes || [];
-          const pages = g.pages || [];
-          const instIds = g.instance_ids || [];
-          // store mapping
-          groupToInstanceIds[g.group_id] = instIds.slice();
-          for (const iid of instIds) instanceToGroup[iid] = g.group_id;
-          for (let i = 0; i < bboxes.length; i++) {
-            if (pages[i] !== pageIndex) continue;
-            const bbox = bboxes[i];
-            const instanceId = instIds[i];
-            const [x0, y0, x1, y1] = bbox;
-            const box = document.createElement("button");
-            box.type = "button";
-            box.className = "preview-box";
-            box.dataset.groupId = g.group_id;
-            box.dataset.instanceId = instanceId;
-            box.dataset.page = pageIndex;
-            box.dataset.bbox = JSON.stringify([x0, y0, x1, y1]);
-            box.style.left = `${x0 * scale}px`;
-            box.style.top = `${y0 * scale}px`;
-            box.style.width = `${(x1 - x0) * scale}px`;
-            box.style.height = `${(y1 - y0) * scale}px`;
-            box.addEventListener("click", (ev) => { ev.stopPropagation(); toggleInstance(instanceId); });
-            pageEl.appendChild(box);
-          }
-        }
-        updatePreviewSelection();
-      });
-
       previewContainer.appendChild(pageEl);
     }
-    // expose maps for later sync
-    previewContainer._groupToInstanceIds = groupToInstanceIds;
-    previewContainer._instanceToGroup = instanceToGroup;
   }
 
   // explicit per-instance selection set
