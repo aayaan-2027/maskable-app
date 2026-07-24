@@ -95,9 +95,42 @@ body {
   .layout { padding: 40px 20px; }
 }
 
+.review-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 2.4fr) minmax(240px, 0.9fr);
+  gap: 24px;
+  align-items: start;
+}
+
+.review-sidebar {
+  position: sticky;
+  top: 24px;
+  align-self: start;
+}
+
+.review-actions--stack {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 20px;
+  border: 1px solid rgba(148, 163, 184, 0.12);
+  border-radius: 16px;
+  background: rgba(17, 24, 39, 0.96);
+}
+
+.preview-wrapper {
+  margin: 0;
+}
+
+@media (max-width: 900px) {
+  .review-layout { grid-template-columns: 1fr; }
+  .review-sidebar { position: static; }
+}
+
 @media (max-width: 600px) {
   .topbar { padding: 18px 16px; }
   .review-actions--stack { min-width: auto; }
+  .review-actions--stack { width: 100%; }
   .btn-secondary, .btn-primary { width: 100%; }
 }
 

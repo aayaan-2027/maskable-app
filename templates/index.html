@@ -54,33 +54,23 @@
         </div>
       </div>
 
-    <div class="review-actions review-actions--top">
-      <button type="button" id="undo-box-btn" class="btn-secondary">Undo highlight</button>
-      <button type="button" id="redo-box-btn" class="btn-secondary">Redo highlight</button>
-      <button type="button" id="back-btn" class="btn-secondary">← Upload a different file</button>
-      <button type="button" id="mask-btn" class="btn-primary">
-        <span class="btn-primary__label">Mask document</span>
-        <span class="btn-primary__arrow">→</span>
-      </button>
-    </div>
+    <div class="review-layout">
+      <div id="preview-wrapper" class="preview-wrapper">
+        <div class="fields__legend">Document Preview</div>
+        <div id="preview-container" class="preview-container" aria-label="Document preview"></div>
+        <p class="subhead preview-note">Draw a box on the preview to select a custom redaction area.</p>
+      </div>
 
-    <div id="preview-wrapper" class="preview-wrapper">
-      <div class="fields__legend">Preview</div>
-      <div id="preview-container" class="preview-container" aria-label="Document preview"></div>
-      <p class="subhead preview-note">Click any highlighted field in the preview to select it for masking, or draw a box for a custom redaction.</p>
-    </div>
-
-    <div class="instructions">
-      <label for="instructions" class="instructions__legend">ANYTHING ELSE? DESCRIBE IT IN PLAIN ENGLISH</label>
-      <textarea id="instructions" placeholder='e.g. mask all Unnati&#39;s transactions — or redact "Acme Corp" everywhere'></textarea>
-    </div>
-
-    <div class="review-actions review-actions--bottom">
-      <button type="button" id="back-btn" class="btn-secondary">← Upload a different file</button>
-      <button type="button" id="mask-btn" class="btn-primary">
-        <span class="btn-primary__label">Mask document</span>
-        <span class="btn-primary__arrow">→</span>
-      </button>
+      <aside class="review-sidebar">
+        <div class="review-actions review-actions--stack">
+          <button type="button" id="undo-box-btn" class="btn-secondary">↺ Undo</button>
+          <button type="button" id="redo-box-btn" class="btn-secondary">↻ Redo</button>
+          <button type="button" id="back-btn" class="btn-secondary">⬆ Upload</button>
+          <button type="button" id="mask-btn" class="btn-primary">
+            <span class="btn-primary__label">Mask document</span>
+          </button>
+        </div>
+      </aside>
     </div>
 
     <div id="mask-status" class="status"></div>
