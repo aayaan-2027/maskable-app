@@ -97,7 +97,6 @@
     previewContainer.innerHTML = "";
     const previews = data.page_previews || [];
     const groups = data.groups || [];
-    // maps for selection syncing
     const groupToInstanceIds = {};
     const instanceToGroup = {};
     if (!previews.length) return;
@@ -131,6 +130,8 @@
             box.className = "preview-box";
             box.dataset.groupId = g.group_id;
             box.dataset.instanceId = instanceId;
+            box.dataset.page = pageIndex;
+            box.dataset.bbox = JSON.stringify([x0, y0, x1, y1]);
             box.style.left = `${x0 * scale}px`;
             box.style.top = `${y0 * scale}px`;
             box.style.width = `${(x1 - x0) * scale}px`;
@@ -157,6 +158,21 @@
     if (selectedInstanceIds.has(instanceId)) selectedInstanceIds.delete(instanceId);
     else selectedInstanceIds.add(instanceId);
     updatePreviewSelection();
+  }
+
+  function getSelectedInstancePayload() {
+    return Array.from(selectedInstanceIds);
+  }
+
+  function getSelectedBoxesPayload() {
+    const boxes = [];
+    previewContainer.querySelectorAll('.preview-box').forEach(box => {
+      if (!box.dataset.instanceId || !selectedInstanceIds.has(box.dataset.instanceId)) return;
+      const bbox = box.dataset.bbox ? JSON.parse(box.dataset.bbox) : null;
+      if (!bbox) return;
+      boxes.push({ page: parseInt(box.dataset.page || '0', 10), bbox });
+    });
+    return boxes;
   }
 
   function groupMatchesSelected(groupId) {
@@ -193,8 +209,7 @@
 
   maskBtn.addEventListener("click", async () => {
     if (!currentJobId) return;
-    const selected = Array.from(groupsContainer.querySelectorAll("input[type=checkbox]:checked"))
-      .map((cb) => cb.dataset.groupId);
+    const selected = [];
     const instructions = instructionsEl.value.trim();
     const customBboxes = window._previewSelect?.getCustomBboxes?.() || [];
 
@@ -214,7 +229,8 @@
         body: JSON.stringify({
           job_id: currentJobId,
           group_ids: selected,
-          instance_ids: Array.from(selectedInstanceIds),
+          instance_ids: getSelectedInstancePayload(),
+          selected_boxes: getSelectedBoxesPayload(),
           instructions,
           custom_bboxes: customBboxes,
         }),

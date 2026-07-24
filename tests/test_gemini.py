@@ -2,6 +2,7 @@ import os
 import unittest
 from unittest.mock import patch
 
+from app import resolve_selected_instances
 from engine.gemini import build_gemini_instances, get_gemini_status, parse_gemini_fields
 
 
@@ -46,6 +47,12 @@ class GeminiFieldParsingTests(unittest.TestCase):
             status = get_gemini_status()
         self.assertFalse(status["configured"])
         self.assertFalse(status["ok"])
+
+    def test_resolve_selected_instances_from_preview_boxes(self):
+        count = resolve_selected_instances([], set(), set(), [{"page": 1, "bbox": [10, 20, 30, 40]}])
+        self.assertEqual(len(count), 1)
+        self.assertEqual(count[0]["page"], 1)
+        self.assertEqual(count[0]["bbox"], (10, 20, 30, 40))
 
 
 if __name__ == "__main__":
