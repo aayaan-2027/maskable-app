@@ -8,6 +8,10 @@
   window.customBboxesUndo = window.customBboxesUndo || [];
   window.customBboxesRedo = window.customBboxesRedo || [];
 
+  function emitBoxesChanged() {
+    window.dispatchEvent(new CustomEvent('preview:boxes-changed'));
+  }
+
   function attachToPreview(previewPageEl) {
     if (previewPageEl._previewSelectAttached) return;
     previewPageEl._previewSelectAttached = true;
@@ -95,6 +99,7 @@
       window.customBboxesUndo.push(cb);
       window.customBboxesRedo = [];
       window.customBboxes.push(cb);
+      emitBoxesChanged();
 
       const box = document.createElement('button');
       box.className = 'preview-box preview-box--custom preview-box--selected';
@@ -117,6 +122,7 @@
           window.customBboxesRedo = [];
         }
         box.remove();
+        emitBoxesChanged();
       });
     }
 
@@ -172,12 +178,14 @@
       window.customBboxesUndo = [];
       window.customBboxesRedo = [];
       document.querySelectorAll('.preview-box.preview-box--custom').forEach(el => el.remove());
+      emitBoxesChanged();
     },
     undo: () => {
       const last = window.customBboxes.pop();
       if (!last) return false;
       window.customBboxesRedo.push(last);
       refreshCustomBoxesFromState();
+      emitBoxesChanged();
       return true;
     },
     redo: () => {
@@ -185,6 +193,7 @@
       if (!next) return false;
       window.customBboxes.push(next);
       refreshCustomBoxesFromState();
+      emitBoxesChanged();
       return true;
     }
   };

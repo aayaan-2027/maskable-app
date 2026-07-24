@@ -11,6 +11,8 @@
   const previewContainer = document.getElementById("preview-container");
   const maskBtn = document.getElementById("mask-btn");
   const backBtn = document.getElementById("back-btn");
+  const undoBtn = document.getElementById("undo-box-btn");
+  const redoBtn = document.getElementById("redo-box-btn");
   const maskStatus = document.getElementById("mask-status");
 
   let currentJobId = null;
@@ -65,6 +67,7 @@
       if (window._previewSelect?.clearCustomBboxes) {
         window._previewSelect.clearCustomBboxes();
       }
+      updateUndoRedoButtons();
       renderReviewIntro(data);
       renderPreview(data);
       setStatus(uploadStatus, "", null);
@@ -89,6 +92,12 @@
     return s.length > n ? s.slice(0, n) + "…" : s;
   }
 
+  function updateUndoRedoButtons() {
+    const hasItems = (window._previewSelect?.getCustomBboxes?.() || []).length > 0;
+    if (undoBtn) undoBtn.disabled = !hasItems;
+    if (redoBtn) redoBtn.disabled = !((window.customBboxesRedo || []).length > 0);
+  }
+
   // ---------- preview rendering and interaction ----------
   function renderPreview(data) {
     if (!previewContainer) return;
@@ -110,6 +119,20 @@
   }
 
   // ---------- step 3: mask & download ----------
+  undoBtn?.addEventListener("click", () => {
+    if (window._previewSelect?.undo?.()) {
+      updateUndoRedoButtons();
+    }
+  });
+
+  redoBtn?.addEventListener("click", () => {
+    if (window._previewSelect?.redo?.()) {
+      updateUndoRedoButtons();
+    }
+  });
+
+  window.addEventListener("preview:boxes-changed", updateUndoRedoButtons);
+
   backBtn.addEventListener("click", () => {
     stepReview.hidden = true;
     stepUpload.hidden = false;
@@ -124,6 +147,7 @@
     if (previewContainer) {
       previewContainer.innerHTML = "";
     }
+    updateUndoRedoButtons();
   });
 
   async function runMaskAction(source) {
