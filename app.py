@@ -106,6 +106,7 @@ def mask():
     body = request.get_json(silent=True) or {}
     job_id = body.get("job_id")
     selected_group_ids = set(body.get("group_ids", []))
+    selected_instance_ids = set(body.get("instance_ids", []))
     instructions = (body.get("instructions") or "").strip()
     custom_bboxes = body.get("custom_bboxes", []) or []
 
@@ -123,7 +124,8 @@ def mask():
     # so a selected checkbox maps back to every matching instance.
     selected_instances = [
         inst for inst in all_instances
-        if f"{inst['category']}::{inst['field_type']}::{inst['display_label']}" in selected_group_ids
+        if (f"{inst['category']}::{inst['field_type']}::{inst['display_label']}" in selected_group_ids
+            or inst["id"] in selected_instance_ids)
     ]
 
     if instructions:
@@ -146,6 +148,18 @@ def mask():
 
     if not selected_instances:
         return jsonify({"error": "Select at least one field, draw a box, or describe what to mask"}), 400
+
+    seen = {}
+    unique_selected = []
+    for inst in selected_instances:
+        inst_id = inst.get("id")
+        if inst_id is None:
+            unique_selected.append(inst)
+            continue
+        if inst_id not in seen:
+            seen[inst_id] = True
+            unique_selected.append(inst)
+    selected_instances = unique_selected
 
     try:
         page_images = [jobs.load_page_image(BASE_DIR, job_id, i) for i in range(num_pages)]

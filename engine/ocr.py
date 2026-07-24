@@ -154,7 +154,7 @@ def pad_bbox(left, top, right, bottom, img_w, img_h, pad=6):
     )
 
 
-def words_bbox(words, idxs, img_w, img_h, pad=6):
+def words_bbox(words, idxs, img_w, img_h, pad=2):
     left = min(words[i]["left"] for i in idxs)
     top = min(words[i]["top"] for i in idxs)
     right = max(words[i]["right"] for i in idxs)

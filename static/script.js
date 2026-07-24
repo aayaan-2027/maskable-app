@@ -223,12 +223,6 @@
     if (!instanceId) return;
     if (selectedInstanceIds.has(instanceId)) selectedInstanceIds.delete(instanceId);
     else selectedInstanceIds.add(instanceId);
-    // update group checkbox to reflect whether any instance in that group is selected
-    const groupId = previewContainer._instanceToGroup && previewContainer._instanceToGroup[instanceId];
-    if (groupId) {
-      const checkbox = groupsContainer.querySelector(`input[data-group-id="${groupId}"]`);
-      if (checkbox) checkbox.checked = groupMatchesSelected(groupId);
-    }
     updatePreviewSelection();
   }
 
@@ -301,6 +295,7 @@
         body: JSON.stringify({
           job_id: currentJobId,
           group_ids: selected,
+          instance_ids: Array.from(selectedInstanceIds),
           instructions,
           custom_bboxes: customBboxes,
         }),

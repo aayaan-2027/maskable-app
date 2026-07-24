@@ -353,6 +353,26 @@ def detect_name(words, lines, page, img_w, img_h, counter):
     return out, seen
 
 
+def _label_line_value_word_idxs(words, line, label):
+    label_tokens = [i18n_labels.normalize(tok) for tok in label.split() if tok]
+    word_idxs = list(line["word_idxs"])
+    normalized_words = [i18n_labels.normalize(words[i]["text"].strip(" ,.:;()")) for i in word_idxs]
+
+    while label_tokens and word_idxs and normalized_words:
+        if normalized_words[0] == label_tokens[0]:
+            label_tokens.pop(0)
+            word_idxs.pop(0)
+            normalized_words.pop(0)
+        else:
+            break
+
+    while word_idxs and normalized_words and normalized_words[0] in {":", "-", "--", "—"}:
+        word_idxs.pop(0)
+        normalized_words.pop(0)
+
+    return word_idxs if word_idxs else list(line["word_idxs"])
+
+
 def detect_generic_labels(words, lines, page, img_w, img_h, counter, already_claimed):
     """
     Catches any "Label: Value" line the specific detectors above don't
@@ -384,10 +404,10 @@ def detect_generic_labels(words, lines, page, img_w, img_h, counter, already_cla
         if len(label) < 2 or label.lower() in {"note", "important", "instructions"}:
             continue
         display = " ".join(w.capitalize() for w in label.split())
+        value_idxs = _label_line_value_word_idxs(words, line, label)
         out.append(_mk(
             f"label:{label.lower()}", display, "generic", value, page,
-            (line["left"], line["top"], line["right"], line["bottom"]),
-            counter.next(),
+            words_bbox(words, value_idxs, img_w, img_h, pad=2), counter.next(),
         ))
     return out
 
