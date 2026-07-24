@@ -61,12 +61,17 @@
         <p class="subhead preview-note">Draw a box on the preview to select a custom redaction area.</p>
       </div>
 
-    <div class="review-actions">
-      <button type="button" id="back-btn" class="btn-secondary">← Upload a different file</button>
-      <button type="button" id="mask-btn" class="btn-primary">
-        <span class="btn-primary__label">Mask document</span>
-        <span class="btn-primary__arrow">→</span>
-      </button>
+      <aside class="review-sidebar">
+        <div class="review-actions review-actions--stack">
+          <button type="button" id="undo-box-btn" class="btn-secondary btn-icon">↺ Undo</button>
+          <button type="button" id="redo-box-btn" class="btn-secondary btn-icon">↻ Redo</button>
+          <button type="button" id="back-btn" class="btn-secondary btn-icon">⬆ Upload</button>
+          <button type="button" id="download-btn" class="btn-secondary btn-icon">⬇ Download</button>
+          <button type="button" id="mask-btn" class="btn-primary btn-icon">
+            <span class="btn-primary__label">⛏ Mask document</span>
+          </button>
+        </div>
+      </aside>
     </div>
 
     <div id="mask-status" class="status"></div>

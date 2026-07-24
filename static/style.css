@@ -400,6 +400,11 @@ body {
   transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
 }
 
+.btn-icon {
+  justify-content: center;
+  font-weight: 600;
+}
+
 .btn-secondary:hover {
   border-color: rgba(125, 211, 252, 0.75);
   color: var(--text);

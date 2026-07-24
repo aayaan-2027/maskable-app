@@ -10,13 +10,13 @@
   const instructionsEl = document.getElementById("instructions");
   const previewContainer = document.getElementById("preview-container");
   const maskBtn = document.getElementById("mask-btn");
+  const downloadBtn = document.getElementById("download-btn");
   const backBtn = document.getElementById("back-btn");
   const maskStatus = document.getElementById("mask-status");
 
   let currentJobId = null;
 
-  // Keep the review list neutral by default; the preview is the primary
-  // selection surface for masking, so no fields are preselected.
+  // The review workflow is now preview-first and custom-draw only.
   const DEFAULT_ON_CATEGORIES = new Set();
 
   // ---------- dropzone ----------
@@ -63,11 +63,10 @@
         return;
       }
       currentJobId = data.job_id;
-      selectedInstanceIds.clear();
       if (window._previewSelect?.clearCustomBboxes) {
         window._previewSelect.clearCustomBboxes();
       }
-      renderGroups(data);
+      renderReviewIntro(data);
       renderPreview(data);
       setStatus(uploadStatus, "", null);
       dropzone.classList.remove("dropzone--busy");
@@ -79,11 +78,11 @@
     }
   }
 
-  // ---------- step 2: render detected field groups ----------
-  function renderGroups(data) {
+  // ---------- step 2: review intro ----------
+  function renderReviewIntro(data) {
     reviewSubhead.textContent = data.num_pages
-      ? `${data.num_pages} page(s) scanned. Select fields directly in the preview — click the highlighted areas you want to mask.`
-      : "Select fields directly in the preview — click the highlighted areas you want to mask.";
+      ? `${data.num_pages} page(s) scanned. Draw a box on the preview to create a custom redaction.`
+      : "Draw a box on the preview to create a custom redaction.";
   }
 
   function truncate(s, n = 42) {
@@ -96,9 +95,6 @@
     if (!previewContainer) return;
     previewContainer.innerHTML = "";
     const previews = data.page_previews || [];
-    const groups = data.groups || [];
-    const groupToInstanceIds = {};
-    const instanceToGroup = {};
     if (!previews.length) return;
 
     for (let pageIndex = 0; pageIndex < previews.length; pageIndex++) {
@@ -110,83 +106,8 @@
       img.className = "preview-image";
       img.src = src;
       pageEl.appendChild(img);
-
-      img.addEventListener("load", () => {
-        const scale = img.clientWidth / img.naturalWidth || 1;
-        for (const g of groups) {
-          const bboxes = g.bboxes || [];
-          const pages = g.pages || [];
-          const instIds = g.instance_ids || [];
-          // store mapping
-          groupToInstanceIds[g.group_id] = instIds.slice();
-          for (const iid of instIds) instanceToGroup[iid] = g.group_id;
-          for (let i = 0; i < bboxes.length; i++) {
-            if (pages[i] !== pageIndex) continue;
-            const bbox = bboxes[i];
-            const instanceId = instIds[i];
-            const [x0, y0, x1, y1] = bbox;
-            const box = document.createElement("button");
-            box.type = "button";
-            box.className = "preview-box";
-            box.dataset.groupId = g.group_id;
-            box.dataset.instanceId = instanceId;
-            box.dataset.page = pageIndex;
-            box.dataset.bbox = JSON.stringify([x0, y0, x1, y1]);
-            box.style.left = `${x0 * scale}px`;
-            box.style.top = `${y0 * scale}px`;
-            box.style.width = `${(x1 - x0) * scale}px`;
-            box.style.height = `${(y1 - y0) * scale}px`;
-            box.addEventListener("click", (ev) => { ev.stopPropagation(); toggleInstance(instanceId); });
-            pageEl.appendChild(box);
-          }
-        }
-        updatePreviewSelection();
-      });
-
       previewContainer.appendChild(pageEl);
     }
-    // expose maps for later sync
-    previewContainer._groupToInstanceIds = groupToInstanceIds;
-    previewContainer._instanceToGroup = instanceToGroup;
-  }
-
-  // explicit per-instance selection set
-  const selectedInstanceIds = new Set();
-
-  function toggleInstance(instanceId) {
-    if (!instanceId) return;
-    if (selectedInstanceIds.has(instanceId)) selectedInstanceIds.delete(instanceId);
-    else selectedInstanceIds.add(instanceId);
-    updatePreviewSelection();
-  }
-
-  function getSelectedInstancePayload() {
-    return Array.from(selectedInstanceIds);
-  }
-
-  function getSelectedBoxesPayload() {
-    const boxes = [];
-    previewContainer.querySelectorAll('.preview-box').forEach(box => {
-      if (!box.dataset.instanceId || !selectedInstanceIds.has(box.dataset.instanceId)) return;
-      const bbox = box.dataset.bbox ? JSON.parse(box.dataset.bbox) : null;
-      if (!bbox) return;
-      boxes.push({ page: parseInt(box.dataset.page || '0', 10), bbox });
-    });
-    return boxes;
-  }
-
-  function groupMatchesSelected(groupId) {
-    const insts = (previewContainer._groupToInstanceIds && previewContainer._groupToInstanceIds[groupId]) || [];
-    return insts.some(iid => selectedInstanceIds.has(iid));
-  }
-
-  function updatePreviewSelection() {
-    if (!previewContainer) return;
-    previewContainer.querySelectorAll('.preview-box').forEach(box => {
-      const iid = box.dataset.instanceId;
-      const selected = !!(iid && selectedInstanceIds.has(iid));
-      box.classList.toggle('preview-box--selected', selected);
-    });
   }
 
   // ---------- step 3: mask & download ----------
@@ -198,7 +119,6 @@
     instructionsEl.value = "";
     setStatus(maskStatus, "", null);
     currentJobId = null;
-    selectedInstanceIds.clear();
     if (window._previewSelect?.clearCustomBboxes) {
       window._previewSelect.clearCustomBboxes();
     }
@@ -207,20 +127,19 @@
     }
   });
 
-  maskBtn.addEventListener("click", async () => {
+  async function runMaskAction(source) {
     if (!currentJobId) return;
-    const selected = [];
-    const instructions = instructionsEl.value.trim();
+    const instructions = instructionsEl ? instructionsEl.value.trim() : "";
     const customBboxes = window._previewSelect?.getCustomBboxes?.() || [];
 
-    const hasPreviewSelection = selectedInstanceIds.size > 0;
-    if (selected.length === 0 && !instructions && customBboxes.length === 0 && !hasPreviewSelection) {
-      setStatus(maskStatus, "Select at least one field, draw a box, or describe what to mask.", "error");
+    if (!instructions && customBboxes.length === 0) {
+      setStatus(maskStatus, "Draw a box or describe what to mask first.", "error");
       return;
     }
 
     setStatus(maskStatus, "Applying redactions…", "loading");
     maskBtn.disabled = true;
+    downloadBtn.disabled = true;
 
     try {
       const res = await fetch("/mask", {
@@ -228,9 +147,9 @@
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           job_id: currentJobId,
-          group_ids: selected,
-          instance_ids: getSelectedInstancePayload(),
-          selected_boxes: getSelectedBoxesPayload(),
+          group_ids: [],
+          instance_ids: [],
+          selected_boxes: [],
           instructions,
           custom_bboxes: customBboxes,
         }),
@@ -240,6 +159,7 @@
         const data = await res.json().catch(() => ({}));
         setStatus(maskStatus, data.error || "Masking failed.", "error");
         maskBtn.disabled = false;
+        downloadBtn.disabled = false;
         return;
       }
 
@@ -255,9 +175,14 @@
 
       setStatus(maskStatus, "Done — your masked PDF has downloaded.", "success");
       maskBtn.disabled = false;
+      downloadBtn.disabled = false;
     } catch (err) {
       setStatus(maskStatus, "Network error — please try again.", "error");
       maskBtn.disabled = false;
+      downloadBtn.disabled = false;
     }
-  });
+  }
+
+  maskBtn.addEventListener("click", () => runMaskAction("mask"));
+  downloadBtn?.addEventListener("click", () => runMaskAction("download"));
 })();
