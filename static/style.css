@@ -1,14 +1,14 @@
 :root {
-  --bg: #10151c;
-  --surface: #171e27;
-  --surface-raised: #1d2530;
-  --border: #2a3441;
-  --text: #e7ecf2;
-  --text-muted: #8b96a6;
-  --accent: #4fd1c5;
-  --accent-dim: #2d7d76;
-  --warn: #e2b93b;
-  --error: #e5716b;
+  --bg: #0f172a;
+  --surface: #111827;
+  --surface-raised: #1f2937;
+  --border: #334155;
+  --text: #f8fafc;
+  --text-muted: #94a3b8;
+  --accent: #7dd3fc;
+  --accent-dim: #38bdf8;
+  --warn: #fbbf24;
+  --error: #fb7185;
 
   --font-display: 'Space Grotesk', sans-serif;
   --font-body: 'IBM Plex Sans', sans-serif;
@@ -26,6 +26,11 @@ html, body {
   min-height: 100vh;
 }
 
+body {
+  display: flex;
+  justify-content: center;
+}
+
 .grain {
   position: fixed;
   inset: 0;
@@ -40,8 +45,8 @@ html, body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 24px 48px;
-  border-bottom: 1px solid var(--border);
+  padding: 22px 36px;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.14);
   flex-wrap: wrap;
   gap: 8px;
 }
@@ -79,17 +84,23 @@ html, body {
 
 /* ── Layout ── */
 .layout {
-  max-width: 720px;
+  max-width: 1120px;
   margin: 0 auto;
-  padding: 64px 48px 40px;
+  padding: 48px 36px 40px;
   position: relative;
   z-index: 2;
 }
 
-@media (max-width: 700px) {
-  .layout { padding: 40px 20px; }
+@media (max-width: 900px) {
+  .layout { padding: 36px 18px; }
   .review-layout { grid-template-columns: 1fr; }
   .review-sidebar { position: static; }
+}
+
+@media (max-width: 600px) {
+  .topbar { padding: 18px 16px; }
+  .review-actions--stack { min-width: auto; }
+  .btn-secondary, .btn-primary { width: 100%; }
 }
 
 .step { animation: fade-in 0.25s ease; }
@@ -97,21 +108,21 @@ html, body {
 
 .headline {
   font-family: var(--font-display);
-  font-size: 48px;
+  font-size: 42px;
   line-height: 1.05;
   font-weight: 700;
-  margin: 0 0 20px;
-  letter-spacing: -0.01em;
+  margin: 0 0 14px;
+  letter-spacing: -0.02em;
 }
 
 .headline--sm { font-size: 32px; margin-bottom: 10px; }
 
 .subhead {
   color: var(--text-muted);
-  font-size: 16px;
-  line-height: 1.6;
-  max-width: 560px;
-  margin: 0 0 32px;
+  font-size: 15px;
+  line-height: 1.7;
+  max-width: 680px;
+  margin: 0;
 }
 
 /* ── Dropzone ── */
@@ -163,10 +174,11 @@ html, body {
 .fields__legend, .instructions__legend {
   font-family: var(--font-mono);
   font-size: 11px;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.18em;
   color: var(--text-muted);
   display: block;
-  margin-bottom: 12px;
+  margin-bottom: 16px;
+  text-transform: uppercase;
 }
 
 .fields__grid {
@@ -177,18 +189,24 @@ html, body {
 
 .review-layout {
   display: grid;
-  grid-template-columns: minmax(0, 2.8fr) minmax(220px, 0.7fr);
-  gap: 24px;
+  grid-template-columns: minmax(0, 3.2fr) minmax(240px, 0.8fr);
+  gap: 28px;
   align-items: start;
 }
 
 .preview-wrapper {
   margin: 0 0 24px;
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  border-radius: 24px;
+  background: rgba(15, 23, 42, 0.95);
+  box-shadow: 0 28px 60px rgba(15, 23, 42, 0.15);
+  overflow: hidden;
 }
 
 .preview-container {
   display: grid;
   gap: 16px;
+  padding: 18px;
 }
 
 .review-sidebar {
@@ -196,14 +214,16 @@ html, body {
   top: 20px;
   display: flex;
   justify-content: flex-end;
+  align-items: flex-start;
 }
 
 .preview-page {
   position: relative;
-  border: 1px solid var(--border);
-  border-radius: 14px;
+  border: 1px solid rgba(148, 163, 184, 0.14);
+  border-radius: 18px;
   overflow: hidden;
-  background: var(--surface);
+  background: #0f172a;
+  min-height: 520px;
 }
 
 .preview-image {
@@ -236,9 +256,10 @@ html, body {
 }
 
 .preview-note {
-  margin-top: 10px;
+  margin-top: 16px;
   color: var(--text-muted);
-  font-size: 13px;
+  font-size: 14px;
+  line-height: 1.7;
 }
 
 .field-toggle {
@@ -328,11 +349,11 @@ html, body {
 .review-actions--stack {
   flex-direction: column;
   align-items: stretch;
-  padding: 14px;
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  background: var(--surface);
-  min-width: 220px;
+  padding: 18px;
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  border-radius: 24px;
+  background: rgba(15, 23, 42, 0.98);
+  min-width: 240px;
 }
 
 .btn-secondary--small {
@@ -341,41 +362,47 @@ html, body {
 }
 
 .btn-primary {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 10px;
-  flex: 1;
-  min-width: 200px;
-  padding: 15px;
-  background: var(--accent);
-  color: #0b1117;
+  width: 100%;
+  padding: 16px 18px;
+  background: linear-gradient(135deg, #7dd3fc, #38bdf8);
+  color: #0f172a;
   border: none;
-  border-radius: 8px;
+  border-radius: 14px;
   font-family: var(--font-display);
-  font-weight: 600;
+  font-weight: 700;
   font-size: 15px;
   cursor: pointer;
-  transition: transform 0.12s ease, background 0.12s ease;
+  transition: transform 0.14s ease, background 0.14s ease, box-shadow 0.14s ease;
+  box-shadow: 0 18px 40px rgba(56, 189, 248, 0.18);
 }
 
-.btn-primary:hover { background: #62e0d4; }
-.btn-primary:active { transform: scale(0.99); }
+.btn-primary:hover {
+  background: linear-gradient(135deg, #38bdf8, #60a5fa);
+  transform: translateY(-1px);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+}
 .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
 
 .btn-primary__arrow { transition: transform 0.15s ease; }
 .btn-primary:hover .btn-primary__arrow { transform: translateX(3px); }
 
 .btn-secondary {
-  padding: 15px 18px;
-  background: transparent;
-  color: var(--text-muted);
-  border: 1px solid var(--border);
-  border-radius: 8px;
+  padding: 14px 18px;
+  background: rgba(148, 163, 184, 0.06);
+  color: var(--text);
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  border-radius: 14px;
   font-family: var(--font-body);
   font-size: 14px;
   cursor: pointer;
-  transition: border-color 0.15s ease, color 0.15s ease;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
 }
 
 .btn-icon {
@@ -384,14 +411,18 @@ html, body {
   font-weight: 600;
 }
 
-.btn-secondary:hover { border-color: var(--accent-dim); color: var(--text); }
+.btn-secondary:hover {
+  border-color: rgba(125, 211, 252, 0.75);
+  color: var(--text);
+  background: rgba(125, 211, 252, 0.08);
+}
 
 .status {
   margin-top: 16px;
   font-family: var(--font-mono);
-  font-size: 12.5px;
+  font-size: 13px;
   color: var(--text-muted);
-  min-height: 18px;
+  min-height: 20px;
 }
 
 .status--error { color: var(--error); }
