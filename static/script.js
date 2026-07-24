@@ -11,6 +11,8 @@
   const previewContainer = document.getElementById("preview-container");
   const maskBtn = document.getElementById("mask-btn");
   const backBtn = document.getElementById("back-btn");
+  const undoBtn = document.getElementById("undo-box-btn");
+  const redoBtn = document.getElementById("redo-box-btn");
   const maskStatus = document.getElementById("mask-status");
 
   let currentJobId = null;
@@ -204,6 +206,18 @@
     }
     if (previewContainer) {
       previewContainer.innerHTML = "";
+    }
+  });
+
+  undoBtn?.addEventListener("click", () => {
+    if (window._previewSelect?.undo) {
+      window._previewSelect.undo();
+    }
+  });
+
+  redoBtn?.addEventListener("click", () => {
+    if (window._previewSelect?.redo) {
+      window._previewSelect.redo();
     }
   });
 

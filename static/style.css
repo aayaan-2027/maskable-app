@@ -306,6 +306,12 @@ html, body {
   display: flex;
   gap: 12px;
   flex-wrap: wrap;
+  align-items: center;
+}
+
+.btn-secondary--small {
+  padding: 10px 14px;
+  font-size: 13px;
 }
 
 .btn-primary {
