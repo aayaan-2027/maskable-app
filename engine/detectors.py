@@ -41,7 +41,7 @@ _OWNED_LABEL_PATTERNS = re.compile(
     re.I,
 )
 
-_LABEL_LINE = re.compile(r'^\s*([A-Za-z][A-Za-z .\'/]{1,40}?)\s*[:\-]\s*(.+)$')
+_LABEL_LINE = re.compile(r'^\s*(.+?)\s*[:\-]\s*(.+)$')
 
 
 def _mk(field_type, display_label, category, value, page, bbox, iid):
