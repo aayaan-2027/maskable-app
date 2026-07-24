@@ -7,7 +7,6 @@
   const stepUpload = document.getElementById("step-upload");
   const stepReview = document.getElementById("step-review");
   const reviewSubhead = document.getElementById("review-subhead");
-  const groupsContainer = document.getElementById("groups-container");
   const instructionsEl = document.getElementById("instructions");
   const previewContainer = document.getElementById("preview-container");
   const maskBtn = document.getElementById("mask-btn");
@@ -82,66 +81,9 @@
 
   // ---------- step 2: render detected field groups ----------
   function renderGroups(data) {
-    groupsContainer.innerHTML = "";
     reviewSubhead.textContent = data.num_pages
       ? `${data.num_pages} page(s) scanned. Select fields directly in the preview — click the highlighted areas you want to mask.`
       : "Select fields directly in the preview — click the highlighted areas you want to mask.";
-
-    if (!data.groups || data.groups.length === 0) {
-      const empty = document.createElement("p");
-      empty.className = "subhead";
-      empty.textContent = data.message || "No standard fields were detected automatically. Describe what to mask below instead.";
-      groupsContainer.appendChild(empty);
-      return;
-    }
-
-    const byCategory = {};
-    for (const g of data.groups) {
-      (byCategory[g.category_label] = byCategory[g.category_label] || []).push(g);
-    }
-
-    for (const [categoryLabel, groups] of Object.entries(byCategory)) {
-      const section = document.createElement("div");
-      section.className = "group-section";
-
-      const legend = document.createElement("div");
-      legend.className = "fields__legend";
-      legend.textContent = categoryLabel.toUpperCase();
-      section.appendChild(legend);
-
-      const grid = document.createElement("div");
-      grid.className = "fields__grid";
-
-      for (const g of groups) {
-        const label = document.createElement("label");
-        label.className = "field-toggle field-toggle--rich";
-
-        const box = document.createElement("span");
-        box.className = "field-toggle__box";
-
-        const textWrap = document.createElement("span");
-        textWrap.className = "field-toggle__text";
-
-        const title = document.createElement("span");
-        title.className = "field-toggle__label";
-        title.textContent = `${g.display_label} (${g.count} found)`;
-
-        const sample = document.createElement("span");
-        sample.className = "field-toggle__sample";
-        const preview = (g.sample_values || []).map(truncate).join(" · ");
-        sample.textContent = preview;
-
-        textWrap.appendChild(title);
-        if (preview) textWrap.appendChild(sample);
-
-        label.appendChild(box);
-        label.appendChild(textWrap);
-        grid.appendChild(label);
-      }
-
-      section.appendChild(grid);
-      groupsContainer.appendChild(section);
-    }
   }
 
   function truncate(s, n = 42) {

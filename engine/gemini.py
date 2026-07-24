@@ -59,7 +59,10 @@ def _looks_like_label(text: str) -> bool:
         "mobile", "address", "nationality", "passport", "id", "number", "license",
         "company", "organization", "employer", "designation", "position", "salary",
         "account", "iban", "bank", "branch", "issue", "expiry", "reference",
-        "customer", "contact", "gender", "signature", "amount", "code", "status"
+        "customer", "contact", "gender", "signature", "amount", "code", "status",
+        "اسم", "الاسم", "التاريخ", "تاريخ الميلاد", "البريد", "الايميل", "الهاتف",
+        "الجوال", "العنوان", "الجنسية", "جواز السفر", "الرقم", "الشركة", "المؤسسة",
+        "الوظيفة", "الراتب", "الحساب", "البنك", "الفرع", "المرجع", "العميل", "المبلغ"
     }
     return cleaned in label_words or any(word in label_words for word in cleaned.split())
 
@@ -69,7 +72,7 @@ def _extract_label_value_pairs(text: str) -> List[Dict[str, str]]:
     pairs = []
 
     for line in lines:
-        match = re.match(r"^([A-Za-z][A-Za-z .,/()&-]{0,40})\s*[:\-–—]\s*(.+)$", line)
+        match = re.match(r"^([A-Za-z\u0600-\u06FF][A-Za-z\u0600-\u06FF .,/()&-]{0,60})\s*[:\-–—]\s*(.+)$", line)
         if match:
             label = _normalize_label(match.group(1))
             value = _normalize_label(match.group(2))
