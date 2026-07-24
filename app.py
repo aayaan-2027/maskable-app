@@ -5,7 +5,7 @@ import uuid
 
 from flask import Flask, request, render_template, send_file, jsonify, after_this_request
 
-from engine import pipeline, jobs, ner, ocr
+from engine import pipeline, jobs, ner, ocr, gemini
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 UPLOAD_DIR = os.path.join(BASE_DIR, "uploads")
@@ -192,7 +192,13 @@ def mask():
 @app.route("/health")
 def health():
     return jsonify({"status": "ok", "ner_active": ner.ner_available(),
-                     "ocr_languages": ocr.active_ocr_langs()})
+                     "ocr_languages": ocr.active_ocr_langs(),
+                     "gemini": gemini.get_gemini_status()})
+
+
+@app.route("/gemini-test")
+def gemini_test():
+    return jsonify(gemini.get_gemini_status())
 
 
 if __name__ == "__main__":

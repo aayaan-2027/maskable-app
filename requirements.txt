@@ -3,6 +3,7 @@ gunicorn==22.0.0
 pdf2image==1.17.0
 pytesseract==0.3.13
 pillow==10.4.0
+google-generativeai==0.1.0rc2
 
 # Optional — enables the AI/NER layer (detect_entities in engine/ner.py)
 # for PERSON/ORG/GPE/MONEY mentions that regex + label detectors miss.

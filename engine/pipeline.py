@@ -6,7 +6,7 @@ Ties the whole thing together:
   render_masked_pdf() page images + chosen instances -> masked PDF file
 """
 
-from . import ocr, detectors, tables, ner, custom, gcc_ids
+from . import ocr, detectors, tables, ner, custom, gcc_ids, gemini
 from .detectors import InstanceCounter
 from .masking import apply_redactions
 
@@ -38,10 +38,12 @@ def extract_fields(pdf_path: str, use_ner: bool = True):
     all_instances = []
     ocr_cache = []
 
+    page_texts = []
     for page_idx, image in enumerate(page_images):
         img_w, img_h = image.size
         words, lines = ocr.ocr_page(image)
         ocr_cache.append((words, lines, img_w, img_h))
+        page_texts.append("\n".join(line.get("text", "") for line in lines if line.get("text")))
 
         known, claimed = detectors.run_known_detectors(words, lines, page_idx, img_w, img_h, counter)
         known = detectors.reassociate_unlabelled_dates(known, lines, words)
@@ -74,6 +76,13 @@ def extract_fields(pdf_path: str, use_ner: bool = True):
         if use_ner:
             entity_instances = ner.detect_entities(words, lines, page_idx, img_w, img_h, counter, claimed)
             all_instances += entity_instances
+
+    try:
+        gemini_fields = gemini.extract_gemini_fields("\n\n".join(page_texts))
+        if gemini_fields:
+            all_instances += gemini.build_gemini_instances(gemini_fields, ocr_cache)
+    except Exception:
+        gemini_fields = []
 
     return page_images, all_instances, ocr_cache
 

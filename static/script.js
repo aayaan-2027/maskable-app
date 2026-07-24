@@ -16,11 +16,9 @@
 
   let currentJobId = null;
 
-  // Categories that are safe to pre-check — clearly identifying fields.
-  // Table columns / generic "other" fields / AI-guessed entities are
-  // left unchecked by default so a bank statement isn't fully blacked
-  // out until the user actually asks for that.
-  const DEFAULT_ON_CATEGORIES = new Set(["identity", "contact"]);
+  // Keep the review list neutral by default; the preview is the primary
+  // selection surface for masking, so no fields are preselected.
+  const DEFAULT_ON_CATEGORIES = new Set();
 
   // ---------- dropzone ----------
   dropzone.addEventListener("click", () => fileInput.click());
@@ -86,8 +84,8 @@
   function renderGroups(data) {
     groupsContainer.innerHTML = "";
     reviewSubhead.textContent = data.num_pages
-      ? `${data.num_pages} page(s) scanned. Select what to mask — checking one masks every occurrence.`
-      : "Select what to mask — checking one masks every occurrence.";
+      ? `${data.num_pages} page(s) scanned. Select fields directly in the preview — click the highlighted areas you want to mask.`
+      : "Select fields directly in the preview — click the highlighted areas you want to mask.";
 
     if (!data.groups || data.groups.length === 0) {
       const empty = document.createElement("p");
@@ -118,12 +116,6 @@
         const label = document.createElement("label");
         label.className = "field-toggle field-toggle--rich";
 
-        const checkbox = document.createElement("input");
-        checkbox.type = "checkbox";
-        checkbox.value = g.group_id;
-        checkbox.checked = DEFAULT_ON_CATEGORIES.has(g.category);
-        checkbox.dataset.groupId = g.group_id;
-
         const box = document.createElement("span");
         box.className = "field-toggle__box";
 
@@ -142,7 +134,6 @@
         textWrap.appendChild(title);
         if (preview) textWrap.appendChild(sample);
 
-        label.appendChild(checkbox);
         label.appendChild(box);
         label.appendChild(textWrap);
         grid.appendChild(label);
@@ -233,27 +224,12 @@
 
   function updatePreviewSelection() {
     if (!previewContainer) return;
-    const checkedGroups = new Set(Array.from(groupsContainer.querySelectorAll('input[type=checkbox]:checked')).map(cb => cb.dataset.groupId));
     previewContainer.querySelectorAll('.preview-box').forEach(box => {
       const iid = box.dataset.instanceId;
-      const gid = box.dataset.groupId;
-      const selected = (iid && selectedInstanceIds.has(iid)) || checkedGroups.has(gid);
-      box.classList.toggle('preview-box--selected', !!selected);
+      const selected = !!(iid && selectedInstanceIds.has(iid));
+      box.classList.toggle('preview-box--selected', selected);
     });
   }
-
-  groupsContainer.addEventListener('change', (e) => {
-    if (!(e.target && e.target.matches('input[type=checkbox]'))) return;
-    const groupId = e.target.dataset.groupId;
-    const checked = e.target.checked;
-    // when a group's checkbox changes, select/deselect all instances in that group
-    const insts = (previewContainer._groupToInstanceIds && previewContainer._groupToInstanceIds[groupId]) || [];
-    for (const iid of insts) {
-      if (checked) selectedInstanceIds.add(iid);
-      else selectedInstanceIds.delete(iid);
-    }
-    updatePreviewSelection();
-  });
 
   // ---------- step 3: mask & download ----------
   backBtn.addEventListener("click", () => {
@@ -280,7 +256,8 @@
     const instructions = instructionsEl.value.trim();
     const customBboxes = window._previewSelect?.getCustomBboxes?.() || [];
 
-    if (selected.length === 0 && !instructions && customBboxes.length === 0) {
+    const hasPreviewSelection = selectedInstanceIds.size > 0;
+    if (selected.length === 0 && !instructions && customBboxes.length === 0 && !hasPreviewSelection) {
       setStatus(maskStatus, "Select at least one field, draw a box, or describe what to mask.", "error");
       return;
     }
