@@ -49,6 +49,7 @@ body {
   border-bottom: 1px solid rgba(148, 163, 184, 0.14);
   flex-wrap: wrap;
   gap: 8px;
+  width: 100%;
 }
 
 .topbar__mark {
@@ -67,7 +68,10 @@ body {
   letter-spacing: 0.05em;
   display: flex;
   align-items: center;
+  justify-content: flex-end;
   gap: 10px;
+  margin-left: auto;
+  flex-wrap: wrap;
 }
 
 .pill {
@@ -271,6 +275,13 @@ body {
   color: var(--text-muted);
   font-size: 14px;
   line-height: 1.7;
+}
+
+.preview-meta {
+  margin-top: 8px;
+  color: var(--text-muted);
+  font-size: 12px;
+  line-height: 1.6;
 }
 
 .field-toggle {

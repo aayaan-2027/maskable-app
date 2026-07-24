@@ -10,7 +10,6 @@
   const instructionsEl = document.getElementById("instructions");
   const previewContainer = document.getElementById("preview-container");
   const maskBtn = document.getElementById("mask-btn");
-  const downloadBtn = document.getElementById("download-btn");
   const backBtn = document.getElementById("back-btn");
   const maskStatus = document.getElementById("mask-status");
 
@@ -139,7 +138,6 @@
 
     setStatus(maskStatus, "Applying redactions…", "loading");
     maskBtn.disabled = true;
-    downloadBtn.disabled = true;
 
     try {
       const res = await fetch("/mask", {
@@ -159,7 +157,6 @@
         const data = await res.json().catch(() => ({}));
         setStatus(maskStatus, data.error || "Masking failed.", "error");
         maskBtn.disabled = false;
-        downloadBtn.disabled = false;
         return;
       }
 
@@ -175,14 +172,11 @@
 
       setStatus(maskStatus, "Done — your masked PDF has downloaded.", "success");
       maskBtn.disabled = false;
-      downloadBtn.disabled = false;
     } catch (err) {
       setStatus(maskStatus, "Network error — please try again.", "error");
       maskBtn.disabled = false;
-      downloadBtn.disabled = false;
     }
   }
 
   maskBtn.addEventListener("click", () => runMaskAction("mask"));
-  downloadBtn?.addEventListener("click", () => runMaskAction("download"));
 })();
