@@ -177,8 +177,8 @@ html, body {
 
 .review-layout {
   display: grid;
-  grid-template-columns: minmax(0, 2.2fr) minmax(220px, 0.8fr);
-  gap: 20px;
+  grid-template-columns: minmax(0, 2.8fr) minmax(220px, 0.7fr);
+  gap: 24px;
   align-items: start;
 }
 
@@ -194,6 +194,8 @@ html, body {
 .review-sidebar {
   position: sticky;
   top: 20px;
+  display: flex;
+  justify-content: flex-end;
 }
 
 .preview-page {
@@ -330,6 +332,7 @@ html, body {
   border: 1px solid var(--border);
   border-radius: 12px;
   background: var(--surface);
+  min-width: 220px;
 }
 
 .btn-secondary--small {
