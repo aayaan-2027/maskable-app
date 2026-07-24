@@ -28,8 +28,12 @@ html, body {
 
 body {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
 }
+
+
 
 .grain {
   position: fixed;
@@ -50,9 +54,13 @@ body {
   flex-wrap: wrap;
   gap: 8px;
   width: 100%;
+  position: relative; /* Ensure proper positioning context */
 }
 
 .topbar__mark {
+  position: absolute;
+  left: 36px;
+  top: 22px;
   font-family: var(--font-mono);
   font-size: 15px;
   letter-spacing: 0.12em;
@@ -165,9 +173,9 @@ body {
 
 @media (max-width: 600px) {
   .topbar { padding: 18px 16px; }
-  .review-actions--stack { min-width: auto; }
-  .review-actions--stack { width: 100%; }
-  .btn-secondary, .btn-primary { width: 100%; }
+  .topbar__mark {
+    position: static; /* Switch back to relative layout on narrow mobile screens if needed */
+  }
 }
 
 .step { animation: fade-in 0.25s ease; }
