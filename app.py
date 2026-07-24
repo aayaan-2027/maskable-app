@@ -31,6 +31,29 @@ def build_document_groups(instances):
     return []
 
 
+def resolve_selected_instances(all_instances, selected_group_ids, selected_instance_ids, selected_boxes):
+    selected_instances = [
+        inst for inst in all_instances
+        if (f"{inst['category']}::{inst['field_type']}::{inst['display_label']}" in selected_group_ids
+            or inst["id"] in selected_instance_ids)
+    ]
+
+    for idx, custom in enumerate(selected_boxes or []):
+        if not isinstance(custom, dict):
+            continue
+        page = custom.get("page")
+        bbox = custom.get("bbox")
+        if not isinstance(page, int) or not isinstance(bbox, list) or len(bbox) != 4:
+            continue
+        selected_instances.append({
+            "id": f"preview-{idx}",
+            "page": page,
+            "bbox": tuple(bbox),
+        })
+
+    return selected_instances
+
+
 @app.route("/")
 def index():
     return render_template("index.html", ner_active=ner.ner_available(),
@@ -107,6 +130,7 @@ def mask():
     job_id = body.get("job_id")
     selected_group_ids = set(body.get("group_ids", []))
     selected_instance_ids = set(body.get("instance_ids", []))
+    selected_boxes = body.get("selected_boxes", []) or []
     instructions = (body.get("instructions") or "").strip()
     custom_bboxes = body.get("custom_bboxes", []) or []
 
@@ -122,11 +146,9 @@ def mask():
 
     # Re-derive each instance's group_id the same way group_for_ui does,
     # so a selected checkbox maps back to every matching instance.
-    selected_instances = [
-        inst for inst in all_instances
-        if (f"{inst['category']}::{inst['field_type']}::{inst['display_label']}" in selected_group_ids
-            or inst["id"] in selected_instance_ids)
-    ]
+    selected_instances = resolve_selected_instances(
+        all_instances, selected_group_ids, selected_instance_ids, selected_boxes
+    )
 
     if instructions:
         ocr_cache = jobs.load_ocr_data(BASE_DIR, job_id)
@@ -147,7 +169,14 @@ def mask():
         })
 
     if not selected_instances:
-        return jsonify({"error": "Select at least one field, draw a box, or describe what to mask"}), 400
+        return jsonify({
+            "error": "Select at least one field, draw a box, or describe what to mask",
+            "debug": {
+                "group_ids": list(selected_group_ids),
+                "instance_ids": list(selected_instance_ids),
+                "selected_boxes": selected_boxes,
+            },
+        }), 400
 
     seen = {}
     unique_selected = []
