@@ -188,8 +188,8 @@
           // store mapping
           groupToInstanceIds[g.group_id] = instIds.slice();
           for (const iid of instIds) instanceToGroup[iid] = g.group_id;
-          if (!pages.includes(pageIndex)) continue;
           for (let i = 0; i < bboxes.length; i++) {
+            if (pages[i] !== pageIndex) continue;
             const bbox = bboxes[i];
             const instanceId = instIds[i];
             const [x0, y0, x1, y1] = bbox;

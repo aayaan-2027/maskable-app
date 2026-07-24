@@ -314,6 +314,46 @@ def detect_address(words, lines, page, img_w, img_h, counter):
     return out, seen
 
 
+def _split_label_indices(words, line, keywords):
+    word_idxs = list(line["word_idxs"])
+    labels = [i for i in word_idxs
+              if i18n_labels.contains_any_keyword(words[i]["text"], keywords)]
+    if not labels:
+        return set()
+    ordered = word_idxs
+    first_label_pos = ordered.index(labels[0])
+    last_label_pos = ordered.index(labels[-1])
+    if last_label_pos + 1 < len(ordered):
+        next_word = words[ordered[last_label_pos + 1]]["text"].strip()
+        if next_word in {":", "-", "--", "—", "–"}:
+            labels.append(ordered[last_label_pos + 1])
+    return set(labels)
+
+
+def _name_value_word_idxs(words, line, label_idxs):
+    ordered = list(line["word_idxs"])
+    if not ordered:
+        return []
+
+    if not label_idxs:
+        return [i for i in ordered if words[i]["text"].strip(" /-:|,.") != ""]
+
+    positions = [ordered.index(i) for i in ordered if i in label_idxs]
+    if not positions:
+        return [i for i in ordered if words[i]["text"].strip(" /-:|,.") != ""]
+
+    first_label = positions[0]
+    last_label = positions[-1]
+    if last_label < len(ordered) / 2:
+        candidate = ordered[last_label + 1:]
+    elif first_label > len(ordered) / 2:
+        candidate = ordered[:first_label]
+    else:
+        candidate = [i for i in ordered if i not in label_idxs]
+
+    return [i for i in candidate if words[i]["text"].strip(" /-:|,.") != ""]
+
+
 def detect_name(words, lines, page, img_w, img_h, counter):
     """
     Line-based and order-independent: captures every word on a
@@ -328,10 +368,8 @@ def detect_name(words, lines, page, img_w, img_h, counter):
     for li, line in enumerate(lines):
         if not i18n_labels.contains_any_keyword(line["text"], NAME_KEYWORDS) or li in claimed_lines:
             continue
-        label_idxs = {i for i in line["word_idxs"]
-                      if i18n_labels.contains_any_keyword(words[i]["text"], NAME_KEYWORDS)}
-        value_idxs = [i for i in line["word_idxs"]
-                      if i not in label_idxs and words[i]["text"].strip(" /-:|") != ""]
+        label_idxs = _split_label_indices(words, line, NAME_KEYWORDS)
+        value_idxs = _name_value_word_idxs(words, line, label_idxs)
         claimed_lines.add(li)
 
         if not value_idxs and li + 1 < len(lines):
@@ -341,14 +379,14 @@ def detect_name(words, lines, page, img_w, img_h, counter):
             gap = nxt["top"] - line["bottom"]
             avg_h = max(1, line["bottom"] - line["top"])
             if gap < avg_h * 1.5 and not _LABEL_LINE.match(nxt["text"]):
-                value_idxs = list(nxt["word_idxs"])
+                value_idxs = [i for i in nxt["word_idxs"] if words[i]["text"].strip(" /-:|,.") != ""]
                 claimed_lines.add(li + 1)
 
         if not value_idxs:
             continue
         val = " ".join(words[i]["text"] for i in value_idxs)
         out.append(_mk("person_name", "Name", "identity", val,
-                        page, words_bbox(words, value_idxs, img_w, img_h), counter.next()))
+                        page, words_bbox(words, value_idxs, img_w, img_h, pad=0), counter.next()))
         seen.update(value_idxs)
     return out, seen
 
@@ -358,6 +396,7 @@ def _label_line_value_word_idxs(words, line, label):
     word_idxs = list(line["word_idxs"])
     normalized_words = [i18n_labels.normalize(words[i]["text"].strip(" ,.:;()")) for i in word_idxs]
 
+    # Find the label segment and choose the contiguous value segment that follows.
     while label_tokens and word_idxs and normalized_words:
         if normalized_words[0] == label_tokens[0]:
             label_tokens.pop(0)
@@ -366,11 +405,20 @@ def _label_line_value_word_idxs(words, line, label):
         else:
             break
 
-    while word_idxs and normalized_words and normalized_words[0] in {":", "-", "--", "—"}:
+    while word_idxs and normalized_words and normalized_words[0] in {":", "-", "--", "—", "–"}:
         word_idxs.pop(0)
         normalized_words.pop(0)
 
-    return word_idxs if word_idxs else list(line["word_idxs"])
+    if not word_idxs:
+        return []
+
+    # Return only the contiguous chunk of words after the label punctuation.
+    start = 0
+    for i, text in enumerate(normalized_words):
+        if text not in {"", ":", "-", "--", "—", "–"}:
+            start = i
+            break
+    return word_idxs[start:]
 
 
 def detect_generic_labels(words, lines, page, img_w, img_h, counter, already_claimed):
@@ -405,9 +453,11 @@ def detect_generic_labels(words, lines, page, img_w, img_h, counter, already_cla
             continue
         display = " ".join(w.capitalize() for w in label.split())
         value_idxs = _label_line_value_word_idxs(words, line, label)
+        if not value_idxs:
+            continue
         out.append(_mk(
             f"label:{label.lower()}", display, "generic", value, page,
-            words_bbox(words, value_idxs, img_w, img_h, pad=2), counter.next(),
+            words_bbox(words, value_idxs, img_w, img_h, pad=0), counter.next(),
         ))
     return out
 
