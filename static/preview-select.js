@@ -5,8 +5,6 @@
 
 (function () {
   window.customBboxes = window.customBboxes || [];
-  window.customBboxesUndo = window.customBboxesUndo || [];
-  window.customBboxesRedo = window.customBboxesRedo || [];
 
   function attachToPreview(previewPageEl) {
     if (previewPageEl._previewSelectAttached) return;
@@ -92,9 +90,7 @@
 
       const id = 'custom-' + (window.customBboxes.length + 1);
       const cb = { id, page: pageIdx, bbox: [nl, nt, nr, nb] };
-      window.customBboxesUndo.push(cb);
-      window.customBboxesRedo = [];
-      window.customBboxes = window.customBboxes.concat(cb);
+      window.customBboxes.push(cb);
 
       const box = document.createElement('button');
       box.className = 'preview-box preview-box--custom preview-box--selected';
@@ -110,12 +106,7 @@
       box.addEventListener('contextmenu', function (ev) {
         ev.preventDefault();
         const cid = box.dataset.customId;
-        const removed = window.customBboxes.filter(x => x.id === cid);
         window.customBboxes = window.customBboxes.filter(x => x.id !== cid);
-        if (removed.length) {
-          window.customBboxesUndo = window.customBboxesUndo.filter(x => x.id !== cid);
-          window.customBboxesRedo = [];
-        }
         box.remove();
       });
     }
@@ -142,50 +133,11 @@
   observer.observe(root, { childList: true, subtree: true });
   document.querySelectorAll('.preview-page').forEach(attachToPreview);
 
-  function refreshCustomBoxesFromState() {
-    document.querySelectorAll('.preview-box.preview-box--custom').forEach(el => el.remove());
-    document.querySelectorAll('.preview-page').forEach(pageEl => {
-      const pageIndex = parseInt(pageEl.dataset.page || '0', 10);
-      const boxes = window.customBboxes.filter(x => x.page === pageIndex);
-      boxes.forEach(cb => {
-        const img = pageEl.querySelector('img.preview-image');
-        if (!img) return;
-        const box = document.createElement('button');
-        box.className = 'preview-box preview-box--custom preview-box--selected';
-        box.dataset.customId = cb.id;
-        const displayScaleX = img.clientWidth / img.naturalWidth;
-        const displayScaleY = img.clientHeight / img.naturalHeight;
-        const [nl, nt, nr, nb] = cb.bbox;
-        box.style.left = (nl * displayScaleX) + 'px';
-        box.style.top = (nt * displayScaleY) + 'px';
-        box.style.width = ((nr - nl) * displayScaleX) + 'px';
-        box.style.height = ((nb - nt) * displayScaleY) + 'px';
-        pageEl.appendChild(box);
-      });
-    });
-  }
-
   window._previewSelect = {
     getCustomBboxes: () => window.customBboxes,
     clearCustomBboxes: () => {
       window.customBboxes = [];
-      window.customBboxesUndo = [];
-      window.customBboxesRedo = [];
       document.querySelectorAll('.preview-box.preview-box--custom').forEach(el => el.remove());
-    },
-    undo: () => {
-      const last = window.customBboxes.pop();
-      if (!last) return false;
-      window.customBboxesRedo.push(last);
-      refreshCustomBoxesFromState();
-      return true;
-    },
-    redo: () => {
-      const next = window.customBboxesRedo.pop();
-      if (!next) return false;
-      window.customBboxes.push(next);
-      refreshCustomBoxesFromState();
-      return true;
     }
   };
 })();

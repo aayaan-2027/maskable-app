@@ -354,25 +354,6 @@ body {
   display: flex;
   gap: 12px;
   flex-wrap: wrap;
-  align-items: center;
-  margin: 0 0 20px;
-}
-
-.review-actions--top {
-  margin: 0 0 24px;
-  padding: 12px;
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  background: var(--surface);
-}
-
-.review-actions--bottom {
-  margin-top: 8px;
-}
-
-.btn-secondary--small {
-  padding: 10px 14px;
-  font-size: 13px;
 }
 
 .btn-primary {
