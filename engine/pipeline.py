@@ -116,10 +116,14 @@ def group_for_ui(instances):
                 "count": 0,
                 "sample_values": [],
                 "instance_ids": [],
+                "pages": [],
+                "bboxes": [],
             }
         g = groups[key]
         g["count"] += 1
         g["instance_ids"].append(inst["id"])
+        g["pages"].append(inst["page"])
+        g["bboxes"].append(inst["bbox"])
         if len(g["sample_values"]) < 3:
             g["sample_values"].append(inst["value"])
 

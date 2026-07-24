@@ -9,6 +9,7 @@
   const reviewSubhead = document.getElementById("review-subhead");
   const groupsContainer = document.getElementById("groups-container");
   const instructionsEl = document.getElementById("instructions");
+  const previewContainer = document.getElementById("preview-container");
   const maskBtn = document.getElementById("mask-btn");
   const backBtn = document.getElementById("back-btn");
   const maskStatus = document.getElementById("mask-status");
@@ -65,7 +66,12 @@
         return;
       }
       currentJobId = data.job_id;
+      selectedInstanceIds.clear();
+      if (window._previewSelect?.clearCustomBboxes) {
+        window._previewSelect.clearCustomBboxes();
+      }
       renderGroups(data);
+      renderPreview(data);
       setStatus(uploadStatus, "", null);
       dropzone.classList.remove("dropzone--busy");
       stepUpload.hidden = true;
@@ -167,6 +173,7 @@
       const src = previews[pageIndex];
       const pageEl = document.createElement("div");
       pageEl.className = "preview-page";
+      pageEl.dataset.page = pageIndex;
       const img = document.createElement("img");
       img.className = "preview-image";
       img.src = src;
@@ -263,6 +270,13 @@
     instructionsEl.value = "";
     setStatus(maskStatus, "", null);
     currentJobId = null;
+    selectedInstanceIds.clear();
+    if (window._previewSelect?.clearCustomBboxes) {
+      window._previewSelect.clearCustomBboxes();
+    }
+    if (previewContainer) {
+      previewContainer.innerHTML = "";
+    }
   });
 
   maskBtn.addEventListener("click", async () => {
@@ -270,9 +284,10 @@
     const selected = Array.from(groupsContainer.querySelectorAll("input[type=checkbox]:checked"))
       .map((cb) => cb.dataset.groupId);
     const instructions = instructionsEl.value.trim();
+    const customBboxes = window._previewSelect?.getCustomBboxes?.() || [];
 
-    if (selected.length === 0 && !instructions) {
-      setStatus(maskStatus, "Select at least one field, or describe what to mask.", "error");
+    if (selected.length === 0 && !instructions && customBboxes.length === 0) {
+      setStatus(maskStatus, "Select at least one field, draw a box, or describe what to mask.", "error");
       return;
     }
 
@@ -283,7 +298,12 @@
       const res = await fetch("/mask", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ job_id: currentJobId, group_ids: selected, instructions }),
+        body: JSON.stringify({
+          job_id: currentJobId,
+          group_ids: selected,
+          instructions,
+          custom_bboxes: customBboxes,
+        }),
       });
 
       if (!res.ok) {

@@ -1,3 +1,5 @@
+import base64
+import io
 import os
 import uuid
 
@@ -16,6 +18,17 @@ MAX_CONTENT_LENGTH = 25 * 1024 * 1024  # 25 MB upload limit
 
 app = Flask(__name__)
 app.config["MAX_CONTENT_LENGTH"] = MAX_CONTENT_LENGTH
+
+
+def _encode_page_preview(image, width=900):
+    buffer = io.BytesIO()
+    image.save(buffer, format="PNG")
+    encoded = base64.b64encode(buffer.getvalue()).decode("ascii")
+    return f"data:image/png;base64,{encoded}"
+
+
+def build_document_groups(instances):
+    return []
 
 
 @app.route("/")
@@ -66,8 +79,13 @@ def extract():
 
     if not groups:
         return jsonify({
-            "job_id": job_id, "num_pages": len(page_images), "groups": [],
-            "ner_active": ner.ner_available(), "ocr_languages": ocr_langs,
+            "job_id": job_id,
+            "num_pages": len(page_images),
+            "groups": [],
+            "documents": documents,
+            "page_previews": page_previews,
+            "ner_active": ner.ner_available(),
+            "ocr_languages": ocr.active_ocr_langs(),
             "message": "No standard fields were detected automatically. "
                        "You can still describe what to mask in plain text below.",
         })
@@ -79,7 +97,7 @@ def extract():
         "documents": documents,
         "page_previews": page_previews,
         "ner_active": ner.ner_available(),
-        "ocr_languages": ocr_langs,
+        "ocr_languages": ocr.active_ocr_langs(),
     })
 
 
@@ -89,6 +107,7 @@ def mask():
     job_id = body.get("job_id")
     selected_group_ids = set(body.get("group_ids", []))
     instructions = (body.get("instructions") or "").strip()
+    custom_bboxes = body.get("custom_bboxes", []) or []
 
     if not job_id:
         return jsonify({"error": "Missing job_id — please re-upload the document"}), 400
@@ -112,8 +131,21 @@ def mask():
         if ocr_cache:
             selected_instances += pipeline.run_custom_search(ocr_cache, instructions)
 
+    for idx, custom in enumerate(custom_bboxes):
+        if not isinstance(custom, dict):
+            continue
+        page = custom.get("page")
+        bbox = custom.get("bbox")
+        if not isinstance(page, int) or not isinstance(bbox, list) or len(bbox) != 4:
+            continue
+        selected_instances.append({
+            "id": f"custom-{idx}",
+            "page": page,
+            "bbox": tuple(bbox),
+        })
+
     if not selected_instances:
-        return jsonify({"error": "Select at least one field, or describe what to mask"}), 400
+        return jsonify({"error": "Select at least one field, draw a box, or describe what to mask"}), 400
 
     try:
         page_images = [jobs.load_page_image(BASE_DIR, job_id, i) for i in range(num_pages)]

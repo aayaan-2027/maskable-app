@@ -51,6 +51,12 @@
 
     <div id="groups-container" class="groups"></div>
 
+    <div id="preview-wrapper" class="preview-wrapper">
+      <div class="fields__legend">Preview</div>
+      <div id="preview-container" class="preview-container" aria-label="Document preview"></div>
+      <p class="subhead preview-note">Click fields in the preview to select them, or draw a box for a custom redaction.</p>
+    </div>
+
     <div class="instructions">
       <label for="instructions" class="instructions__legend">ANYTHING ELSE? DESCRIBE IT IN PLAIN ENGLISH</label>
       <textarea id="instructions" placeholder='e.g. mask all Unnati&#39;s transactions — or redact "Acme Corp" everywhere'></textarea>
@@ -72,5 +78,6 @@
 <footer class="footer">Processed in memory · originals deleted immediately after OCR · session data expires after 30 minutes</footer>
 
 <script src="{{ url_for('static', filename='script.js') }}"></script>
+<script src="{{ url_for('static', filename='preview-select.js') }}"></script>
 </body>
 </html>

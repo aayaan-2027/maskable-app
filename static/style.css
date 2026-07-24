@@ -173,6 +173,58 @@ html, body {
   gap: 8px;
 }
 
+.preview-wrapper {
+  margin: 20px 0 32px;
+}
+
+.preview-container {
+  display: grid;
+  gap: 16px;
+}
+
+.preview-page {
+  position: relative;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  overflow: hidden;
+  background: var(--surface);
+}
+
+.preview-image {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.preview-box {
+  position: absolute;
+  border: 1px solid rgba(79, 209, 197, 0.8);
+  background: rgba(79, 209, 197, 0.12);
+  cursor: pointer;
+}
+
+.preview-box--selected {
+  border-color: rgba(79, 209, 197, 1);
+  background: rgba(79, 209, 197, 0.3);
+}
+
+.preview-box--custom {
+  border-style: dashed;
+}
+
+.preview-selection {
+  position: absolute;
+  border: 1px dashed var(--accent);
+  background: rgba(79, 209, 197, 0.15);
+  pointer-events: none;
+}
+
+.preview-note {
+  margin-top: 10px;
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
 .field-toggle {
   display: flex;
   align-items: flex-start;
