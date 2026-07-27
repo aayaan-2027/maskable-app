@@ -48,7 +48,7 @@ body {
 .topbar {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: start;
   padding: 24px 48px;
   border-bottom: 1px solid var(--border);
   flex-wrap: wrap;
