@@ -45,14 +45,28 @@ body {
 }
 
 /* ── Topbar ── */
+/* ── Topbar ── */
 .topbar {
   display: flex;
-  justify-content: space-between;
-  align-items: start;
+  justify-content: flex-end; /* Align Redactor mark to the far right */
+  align-items: center;
   padding: 24px 48px;
-  border-bottom: 1px solid var(--border);
-  flex-wrap: wrap;
-  gap: 8px;
+  width: 100%;
+}
+
+/* Accent Underline Across the Page */
+.topbar-underline {
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--border) 20%,
+    var(--accent-dim) 50%,
+    var(--accent) 80%,
+    transparent 100%
+  );
+  opacity: 0.8;
 }
 
 .topbar__mark {
@@ -60,9 +74,12 @@ body {
   font-size: 15px;
   letter-spacing: 0.12em;
   font-weight: 500;
+  margin-left: auto; /* Fallback to guarantee right alignment */
 }
 
-.topbar__bracket { color: var(--accent); }
+.topbar__bracket { 
+  color: var(--accent); 
+}
 
 .topbar__meta {
   font-family: var(--font-mono);
