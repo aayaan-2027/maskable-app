@@ -48,7 +48,7 @@ body {
 /* ── Topbar ── */
 .topbar {
   display: flex;
-  justify-content: flex-end; /* Align Redactor mark to the far right */
+  justify-content: flex-start; /* Align Redactor mark to the far left */
   align-items: center;
   padding: 24px 48px;
   width: 100%;
