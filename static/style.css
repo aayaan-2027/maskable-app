@@ -74,7 +74,10 @@ body {
   letter-spacing: 0.05em;
   display: flex;
   align-items: center;
+  justify-content: flex-end;
   gap: 10px;
+  margin-left: auto;
+  flex-wrap: wrap;
 }
 
 .pill {
