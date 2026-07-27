@@ -48,9 +48,10 @@ body {
 /* ── Topbar ── */
 /* Update .topbar in your style.css */
 /* ── Topbar ── */
+/* ── Topbar ── */
 .topbar {
   display: flex;
-  justify-content: space-between; /* Pushes mark to left, meta to right */
+  justify-content: space-between; /* Pushes mark to the left, meta to the right */
   align-items: center;
   padding: 24px 48px;
   width: 100%;
@@ -61,7 +62,7 @@ body {
   font-size: 15px;
   letter-spacing: 0.12em;
   font-weight: 500;
-  margin: 0; /* Reset margins */
+  margin: 0;
 }
 
 .topbar__meta {
@@ -71,11 +72,11 @@ body {
   letter-spacing: 0.05em;
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin-left: auto; /* Ensures it stays anchored to the far right */
+  gap: 8px; /* Space between OCR:, language pill, and NER status */
+  margin-left: auto; /* Locks meta container to the far right */
 }
 
-/* Page Underline Below Header */
+/* Page Underline */
 .topbar-underline {
   width: 100%;
   height: 2px;
