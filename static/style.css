@@ -37,10 +37,8 @@ body {
   flex-direction: column;
   align-items: center;
   min-height: 100vh;
-  background:
-    radial-gradient(circle at top center, rgba(125, 211, 252, 0.16) 0%, rgba(28, 37, 65, 0.16) 24%, transparent 44%),
-    linear-gradient(135deg, var(--bg-deep) 0%, var(--bg) 48%, var(--bg-accent) 100%);
-  background-attachment: fixed;
+  background: transparent;
+  color: var(--text);
 }
 
 
