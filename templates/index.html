@@ -3,28 +3,29 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Redactor — Mask sensitive document fields</title>
+<title>Redactor — Automatic document field masking</title>
+<link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='favicon.svg') }}">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
 
-<div class="grain" aria-hidden="true"></div>
+<div class="grain"></div>
 
 <header class="topbar">
   <div class="topbar__mark">
     <span class="topbar__bracket">[</span>REDACTOR<span class="topbar__bracket">]</span>
   </div>
-  <div class="topbar__meta">
+  <!-- <div class="topbar__meta">
     OCR: <span class="pill{% if 'urd' in ocr_languages or 'ara' in ocr_languages %} pill--on{% endif %}">{{ ocr_languages }}</span>
     {% if ner_active %}<span class="pill pill--on">NER model active</span>{% else %}<span class="pill">regex &amp; layout detection only</span>{% endif %}
-  </div>
+  </div> -->
 </header>
 
 <main class="layout">
 
-  <!-- STEP 1: UPLOAD (Layout matching Version 1) -->
+  <!-- STEP 1: upload -->
   <section id="step-upload" class="panel step">
     <h1 class="headline">Black out what<br>shouldn't travel.</h1>
     <p class="subhead">
@@ -34,89 +35,55 @@
       after processing.
     </p>
 
-    <div id="dropzone" class="dropzone" tabindex="0" role="button" aria-label="Upload PDF Document">
+    <div id="dropzone" class="dropzone">
       <input type="file" id="file-input" accept="application/pdf" hidden>
       <div class="dropzone__icon">＋</div>
       <div class="dropzone__label">Drop a PDF here, or <span class="dropzone__browse">browse</span></div>
-      <div class="dropzone__filename" id="file-name" aria-live="polite"></div>
+      <div class="dropzone__filename" id="file-name"></div>
     </div>
 
-    <div id="upload-status" class="status" aria-live="polite"></div>
+    <div id="upload-status" class="status"></div>
   </section>
 
-  <!-- STEP 2: REVIEW DETECTED FIELDS (Hidden until /extract returns) -->
+  <!-- STEP 2: review detected fields (hidden until /extract returns) -->
   <section id="step-review" class="panel step" hidden>
-    <form id="review-form">
-      <h2 class="headline headline--sm">We found these fields</h2>
-      <p class="subhead" id="review-subhead">Select what to mask. Fields are grouped by type — checking one masks every occurrence.</p>
-
-      <div id="groups-container" class="groups"></div>
-
-      <div class="instructions">
-        <label for="instructions" class="instructions__legend">OR DESCRIBE IT IN PLAIN ENGLISH (adds to the checkboxes above)</label>
-        <textarea id="instructions" name="instructions" placeholder="e.g. mask all Unnati's record — or mask aadhaar number and dob"></textarea>
-      </div>
-
-      <button type="submit" id="submit-btn" class="btn-primary">
-        <span class="btn-primary__label">Mask document</span>
-        <span class="btn-primary__arrow">→</span>
-      </button>
-
-      <div id="status" class="status" aria-live="polite"></div>
-    </form>
-  </section>
-
-  <!-- LIVE MOCK PREVIEW PANEL -->
-  <section class="panel panel--right" id="preview-panel">
-    <div class="preview">
-      <div class="preview__label">LIVE PREVIEW</div>
-      <div class="id-card">
-        <div class="id-card__header">
-          <div class="id-card__chip"></div>
-          <div class="id-card__title">SAMPLE ID DOCUMENT</div>
-        </div>
-
-        <div class="id-row">
-          <span class="id-row__label">Name</span>
-          <span class="id-row__value redact" data-field="aadhaar_name">RAVI KUMAR SHARMA</span>
-        </div>
-        <div class="id-row">
-          <span class="id-row__label">Aadhaar No.</span>
-          <span class="id-row__value redact" data-field="aadhaar_number">XXXX XXXX XXXX</span>
-        </div>
-        <div class="id-row">
-          <span class="id-row__label">PAN No.</span>
-          <span class="id-row__value redact" data-field="pan_number">ABCPK1234L</span>
-        </div>
-        <div class="id-row">
-          <span class="id-row__label">Date of Birth</span>
-          <span class="id-row__value redact" data-field="dob">14/03/1990</span>
-        </div>
-        <div class="id-row">
-          <span class="id-row__label">Address</span>
-          <span class="id-row__value redact" data-field="address">221B, Sector 12, New Delhi</span>
-        </div>
-        <div class="id-row">
-          <span class="id-row__label">Phone</span>
-          <span class="id-row__value redact" data-field="phone_number">98765 43210</span>
-        </div>
-        <div class="id-row">
-          <span class="id-row__label">Email</span>
-          <span class="id-row__value redact" data-field="email">ravi.sharma@mail.com</span>
-        </div>
-        <div class="id-row">
-          <span class="id-row__label">Card No.</span>
-          <span class="id-row__value redact" data-field="credit_card_number">4111 2222 3333 4444</span>
+      <div class="review-hero">
+        <div>
+          <h2 class="headline headline--sm">Review the document</h2>
+          <p class="subhead" id="review-subhead">2 page(s) scanned. Draw a box to redact sensitive info.</p>
         </div>
       </div>
-      <div class="preview__caption">Toggling a field bar-redacts it here — this is exactly what happens to your real PDF.</div>
+
+    <div class="review-layout">
+      <div id="preview-wrapper" class="preview-wrapper">
+        <div class="fields__legend">Document Preview</div>
+        <div id="preview-container" class="preview-container" aria-label="Document preview"></div>
+        <p class="subhead preview-note">Draw a box on the preview to select a custom redaction area.</p>
+        <p class="subhead preview-meta">Processed in memory · originals deleted immediately after OCR · session data expires after 30 minutes</p>
+      </div>
+
+      <aside class="review-sidebar">
+        <div class="review-actions review-actions--stack">
+          <div class="review-actions__header">
+            <div class="review-actions__eyebrow">custom redactions</div>
+            <p class="review-actions__hint">Draw a box on the preview to add a new redaction. Undo or redo to refine it.</p>
+          </div>
+          <button type="button" id="undo-box-btn" class="btn-secondary btn-icon">↺ Undo</button>
+          <button type="button" id="redo-box-btn" class="btn-secondary btn-icon">↻ Redo</button>
+          <button type="button" id="back-btn" class="btn-secondary btn-icon">⬆ Upload</button>
+          <button type="button" id="mask-btn" class="btn-primary btn-icon">
+            <span class="btn-primary__label">⛏ Mask document</span>
+          </button>
+        </div>
+      </aside>
     </div>
+
+    <div id="mask-status" class="status"></div>
   </section>
 
 </main>
 
-<footer class="footer">Processed in memory · originals deleted immediately after masking</footer>
-
 <script src="{{ url_for('static', filename='script.js') }}"></script>
+<script src="{{ url_for('static', filename='preview-select.js') }}"></script>
 </body>
 </html>
