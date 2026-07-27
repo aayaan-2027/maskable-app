@@ -62,7 +62,10 @@ body {
   font-weight: 500;
 }
 
-.topbar__bracket { color: var(--accent); }
+.topbar__bracket {
+  color: var(--accent);
+  letter-spacing: normal; /* Prevents brackets from overlapping text */
+}
 
 .topbar__meta {
   font-family: var(--font-mono);
