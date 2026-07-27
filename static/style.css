@@ -46,12 +46,23 @@ body {
 
 /* ── Topbar ── */
 /* ── Topbar ── */
+/* Update .topbar in your style.css */
 .topbar {
   display: flex;
-  justify-content: flex-start; /* Align Redactor mark to the far left */
+  justify-content: flex-start; /* Aligns content to the left */
   align-items: center;
   padding: 24px 48px;
   width: 100%;
+}
+
+.topbar__mark {
+  font-family: var(--font-mono);
+  font-size: 15px;
+  letter-spacing: 0.12em;
+  font-weight: 500;
+  margin-left: 0; /* Resets right alignment */
+  margin-right: auto; /* Keeps it anchored to the left */
+  text-align: left;
 }
 
 /* Accent Underline Across the Page */
@@ -69,13 +80,6 @@ body {
   opacity: 0.8;
 }
 
-.topbar__mark {
-  font-family: var(--font-mono);
-  font-size: 15px;
-  letter-spacing: 0.12em;
-  font-weight: 500;
-  margin-left: auto; /* Fallback to guarantee right alignment */
-}
 
 .topbar__bracket { 
   color: var(--accent); 
