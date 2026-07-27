@@ -1,12 +1,19 @@
 :root {
-  --bg: #0f172a;
-  --surface: #111827;
-  --surface-raised: #1f2937;
-  --border: #334155;
+  --bg: #020617;
+  --bg-deep: #0b132b;
+  --bg-accent: #1c2541;
+  --surface: rgba(10, 19, 38, 0.84);
+  --surface-raised: rgba(15, 31, 58, 0.96);
+  --border: rgba(125, 211, 252, 0.18);
+  --border-strong: rgba(125, 211, 252, 0.45);
   --text: #f8fafc;
-  --text-muted: #94a3b8;
+  --text-muted: #cbd5e1;
   --accent: #7dd3fc;
   --accent-dim: #38bdf8;
+  --accent-soft: rgba(125, 211, 252, 0.16);
+  --accent-strong: rgba(56, 189, 248, 0.24);
+  --card-bg: rgba(248, 250, 252, 0.94);
+  --card-text: #0f172a;
   --warn: #fbbf24;
   --error: #fb7185;
 
@@ -20,7 +27,6 @@
 html, body {
   margin: 0;
   padding: 0;
-  background: var(--bg);
   color: var(--text);
   font-family: var(--font-body);
   min-height: 100vh;
@@ -31,6 +37,10 @@ body {
   flex-direction: column;
   align-items: center;
   min-height: 100vh;
+  background:
+    radial-gradient(circle at top center, rgba(125, 211, 252, 0.16) 0%, rgba(28, 37, 65, 0.16) 24%, transparent 44%),
+    linear-gradient(135deg, var(--bg-deep) 0%, var(--bg) 48%, var(--bg-accent) 100%);
+  background-attachment: fixed;
 }
 
 
@@ -127,8 +137,98 @@ body {
   z-index: 2;
 }
 
+.upload-hero {
+  max-width: 920px;
+  margin: 0 auto;
+  padding: 48px 40px 36px;
+  border: 1px solid var(--border);
+  border-radius: 30px;
+  background: linear-gradient(135deg, rgba(2, 6, 23, 0.8), rgba(15, 23, 42, 0.9));
+  box-shadow: 0 24px 80px rgba(2, 8, 23, 0.3);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+}
+
+.hero-copy {
+  max-width: 760px;
+  margin: 0 auto 28px;
+  text-align: center;
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 12px;
+  padding: 7px 12px;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  border: 1px solid var(--border-strong);
+  color: var(--accent);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.upload-shell {
+  margin: 0 auto;
+  max-width: 720px;
+}
+
+.feature-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.feature-card {
+  padding: 18px 18px 20px;
+  border-radius: 18px;
+  border: 1px solid rgba(125, 211, 252, 0.16);
+  background: var(--card-bg);
+  color: var(--card-text);
+  box-shadow: 0 16px 36px rgba(15, 23, 42, 0.12);
+}
+
+.feature-badge {
+  display: inline-flex;
+  align-items: center;
+  margin-bottom: 10px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(125, 211, 252, 0.14);
+  color: #0369a1;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.feature-card h3 {
+  margin: 0 0 8px;
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.feature-card p {
+  margin: 0;
+  color: #334155;
+  font-size: 14px;
+  line-height: 1.65;
+}
+
+@media (max-width: 900px) {
+  .feature-grid { grid-template-columns: 1fr; }
+}
+
 @media (max-width: 700px) {
   .layout { padding: 40px 20px; }
+  .upload-hero { padding: 36px 20px 28px; }
+  .headline { font-size: 36px; }
 }
 
 .review-hero {
@@ -226,36 +326,47 @@ body {
 
 /* ── Dropzone ── */
 .dropzone {
-  border: 1px dashed var(--border);
-  border-radius: 10px;
+  border: 1px solid var(--border-strong);
+  border-radius: 22px;
   padding: 48px 24px;
   text-align: center;
   cursor: pointer;
-  transition: border-color 0.2s ease, background 0.2s ease, opacity 0.2s ease;
-  background: var(--surface);
+  transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+  background: linear-gradient(135deg, rgba(2, 6, 23, 0.72), rgba(15, 31, 58, 0.8));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
 }
 
 .dropzone:hover, .dropzone.dropzone--drag {
   border-color: var(--accent);
-  background: var(--surface-raised);
+  background: linear-gradient(135deg, rgba(8, 15, 33, 0.9), rgba(30, 41, 76, 0.94));
+  box-shadow: 0 0 0 1px var(--accent-soft), 0 18px 40px rgba(56, 189, 248, 0.12);
 }
 
 .dropzone--busy { opacity: 0.6; pointer-events: none; }
 
 .dropzone__icon {
-  font-size: 26px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 58px;
+  height: 58px;
+  margin: 0 auto 12px;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  border: 1px solid var(--border-strong);
+  font-size: 28px;
   color: var(--accent);
-  margin-bottom: 8px;
 }
 
 .dropzone__label {
-  font-size: 14px;
+  font-size: 15px;
   color: var(--text-muted);
 }
 
 .dropzone__browse {
   color: var(--accent);
-  text-decoration: underline;
+  font-weight: 600;
+  text-decoration: none;
 }
 
 .dropzone__filename {

@@ -27,23 +27,43 @@
 <main class="layout">
 
   <!-- STEP 1: upload -->
-  <section id="step-upload" class="panel step">
-    <h1 class="headline">Black out what<br>shouldn't travel.</h1>
-    <p class="subhead">
-      Upload any PDF — an ID card, PAN card, offer letter, or a full bank
-      statement. We scan the whole document, list out every field we
-      found, and you pick exactly what gets redacted. Nothing is stored
-      after processing.
-    </p>
-
-    <div id="dropzone" class="dropzone">
-      <input type="file" id="file-input" accept="application/pdf" hidden>
-      <div class="dropzone__icon">＋</div>
-      <div class="dropzone__label">Drop a PDF here, or <span class="dropzone__browse">browse</span></div>
-      <div class="dropzone__filename" id="file-name"></div>
+  <section id="step-upload" class="step upload-hero">
+    <div class="hero-copy">
+      <p class="eyebrow">Professional document redaction</p>
+      <h1 class="headline">SECURE DOCUMENT REDACTION</h1>
+      <p class="subhead">
+        Upload any PDF — ID card, PAN card, offer letter, or bank statement. We scan the document, detect sensitive fields, and let you redact them permanently. No data is stored.
+      </p>
     </div>
 
-    <div id="upload-status" class="status"></div>
+    <div class="upload-shell">
+      <div id="dropzone" class="dropzone">
+        <input type="file" id="file-input" accept="application/pdf" hidden>
+        <div class="dropzone__icon">＋</div>
+        <div class="dropzone__label">Drop a PDF here, or <span class="dropzone__browse">browse</span></div>
+        <div class="dropzone__filename" id="file-name"></div>
+      </div>
+
+      <div id="upload-status" class="status"></div>
+    </div>
+
+    <div class="feature-grid">
+      <article class="feature-card">
+        <span class="feature-badge">Feature</span>
+        <h3>Precise field selection</h3>
+        <p>Choose the exact fields you need to mask with high-accuracy detection and clear review.</p>
+      </article>
+      <article class="feature-card">
+        <span class="feature-badge">PAN / ID</span>
+        <h3>Financial & personal documents</h3>
+        <p>Handle sensitive data on PAN cards, ID cards, bank statements, and other official documents.</p>
+      </article>
+      <article class="feature-card">
+        <span class="feature-badge">Security</span>
+        <h3>Zero-retention processing</h3>
+        <p>Nothing is stored after processing, so your document remains private and protected.</p>
+      </article>
+    </div>
   </section>
 
   <!-- STEP 2: review detected fields (hidden until /extract returns) -->
