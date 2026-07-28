@@ -5,6 +5,16 @@
   --surface: rgba(10, 19, 38, 0.84);
   --surface-raised: rgba(15, 31, 58, 0.96);
   --border: rgba(125, 211, 252, 0.18);
+  --border-strong: rgba(125, 211, 252,Here is your updated CSS code, cleaned up and streamlined. Duplicate rules (such as `.topbar`, `.topbar__meta`, and `.preview-wrapper`) have been safely consolidated into clear, organized sections without changing your visual design or functionality.
+
+```css
+:root {
+  --bg: #020617;
+  --bg-deep: #0b132b;
+  --bg-accent: #1c2541;
+  --surface: rgba(10, 19, 38, 0.84);
+  --surface-raised: rgba(15, 31, 58, 0.96);
+  --border: rgba(125, 211, 252, 0.18);
   --border-strong: rgba(125, 211, 252, 0.45);
   --text: #f8fafc;
   --text-muted: #cbd5e1;
@@ -22,7 +32,9 @@
   --font-mono: 'IBM Plex Mono', monospace;
 }
 
-* { box-sizing: border-box; }
+* { 
+  box-sizing: border-box; 
+}
 
 html, body {
   margin: 0;
@@ -45,16 +57,22 @@ body {
   color: var(--text);
 }
 
-
-
 .grain {
   position: fixed;
   inset: 0;
   pointer-events: none;
   opacity: 0.035;
   z-index: 1;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
+
+/* ── Topbar ── */
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px 48px;
+  width: 10
 
 /* ── Topbar ── */
 /* ── Topbar ── */
