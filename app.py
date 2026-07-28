@@ -4,6 +4,7 @@ import os
 import uuid
 
 from flask import Flask, request, render_template, send_file, jsonify, after_this_request
+from werkzeug.exceptions import RequestEntityTooLarge
 
 from engine import pipeline, jobs, ner, ocr, gemini
 
@@ -14,10 +15,15 @@ os.makedirs(UPLOAD_DIR, exist_ok=True)
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 os.makedirs(os.path.join(BASE_DIR, "jobs"), exist_ok=True)
 
-MAX_CONTENT_LENGTH = 25 * 1024 * 1024  # 25 MB upload limit
+MAX_CONTENT_LENGTH = 26 * 1024 * 1024  # 25 MB file + small multipart overhead buffer
 
 app = Flask(__name__)
 app.config["MAX_CONTENT_LENGTH"] = MAX_CONTENT_LENGTH
+
+
+@app.errorhandler(RequestEntityTooLarge)
+def handle_request_entity_too_large(error):
+    return jsonify({"error": "The uploaded PDF is too large. Please choose a file smaller than 25 MB."}), 413
 
 
 def _encode_page_preview(image, width=900):

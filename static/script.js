@@ -57,7 +57,15 @@
 
     try {
       const res = await fetch("/extract", { method: "POST", body: formData });
-      const data = await res.json();
+      const rawText = await res.text();
+      let data = {};
+
+      try {
+        data = rawText ? JSON.parse(rawText) : {};
+      } catch {
+        data = { error: rawText || "Something went wrong reading that PDF." };
+      }
+
       if (!res.ok) {
         setStatus(uploadStatus, data.error || "Something went wrong reading that PDF.", "error");
         dropzone.classList.remove("dropzone--busy");
