@@ -26,13 +26,15 @@
 
 <main class="layout">
 
-  <!-- STEP 1: upload -->
+<!-- STEP 1: upload -->
   <section id="step-upload" class="step upload-hero">
     <div class="hero-copy">
-      <p class="eyebrow">Professional document redaction</p>
-      <h1 class="headline">SECURE DOCUMENT REDACTION</h1>
+      <div class="badge-pill">
+        <span class="badge-dot">•</span> DOCUMENT REDACTION · ON-DEVICE PROCESSING
+      </div>
+      <h1 class="headline">Redact Sensitive Data.<br><span class="headline--accent">Retain Full Control.</span></h1>
       <p class="subhead">
-        Upload any PDF — ID card, PAN card, offer letter, or bank statement. We scan the document, detect sensitive fields, and let you redact them permanently. No data is stored.
+        Upload any PDF — <strong>ID documents, offer letters, contracts, bank statements, or tax forms.</strong> Draw a box over any field you need hidden, and DocuMask removes it permanently before you download. Nothing is uploaded to a server or retained after your session.
       </p>
     </div>
 
@@ -40,28 +42,44 @@
       <div id="dropzone" class="dropzone">
         <input type="file" id="file-input" accept="application/pdf" hidden>
         <div class="dropzone__icon">＋</div>
-        <div class="dropzone__label">Drop a PDF here, or <span class="dropzone__browse">browse</span></div>
+        <div class="dropzone__label">Drop a PDF here, or <span class="dropzone__browse">browse files</span></div>
+        <div class="dropzone__meta">ACCEPTED FORMAT: PDF · MAX SIZE: 25 MB</div>
         <div class="dropzone__filename" id="file-name"></div>
+      </div>
+
+      <div class="trust-indicators">
+        <span class="trust-item"><span class="trust-icon">✓</span> Processed in your browser</span>
+        <span class="trust-item"><span class="trust-icon">⊞</span> Redactions are permanent</span>
+        <span class="trust-item"><span class="trust-icon">✕</span> Nothing retained after session</span>
       </div>
 
       <div id="upload-status" class="status"></div>
     </div>
 
+    <!-- Section Header for 3 Steps -->
+    <div class="steps-header">
+      <div class="badge-pill">
+        <span class="badge-dot">•</span> THREE STEPS
+      </div>
+      <h2 class="headline headline--sm">From upload to redacted download</h2>
+      <p class="subhead">No accounts, no configuration — the entire flow happens in a single session.</p>
+    </div>
+
     <div class="feature-grid">
       <article class="feature-card">
-        <span class="feature-badge">Feature</span>
-        <h3>Precise field selection</h3>
-        <p>Choose the exact fields you need to mask with high-accuracy detection and clear review.</p>
+        <span class="feature-number">01</span>
+        <h3>Upload</h3>
+        <p>Add a PDF from your device. Files are read locally and never leave your browser.</p>
       </article>
       <article class="feature-card">
-        <span class="feature-badge">PAN / ID</span>
-        <h3>Financial & personal documents</h3>
-        <p>Handle sensitive data on PAN cards, ID cards, bank statements, and other official documents.</p>
+        <span class="feature-number">02</span>
+        <h3>Mark fields</h3>
+        <p>Draw boxes directly over names, numbers, or any text that needs to be hidden.</p>
       </article>
       <article class="feature-card">
-        <span class="feature-badge">Security</span>
-        <h3>Zero-retention processing</h3>
-        <p>Nothing is stored after processing, so your document remains private and protected.</p>
+        <span class="feature-number">03</span>
+        <h3>Download</h3>
+        <p>Get a redacted copy instantly. The original and marked regions are not stored.</p>
       </article>
     </div>
   </section>
