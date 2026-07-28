@@ -211,7 +211,7 @@ body {
 
 .feature-flow {
   position: absolute;
-  inset: 24px 24px auto 24px;
+  inset: 10px 24px auto 24px;
   pointer-events: none;
   z-index: 0;
 }
