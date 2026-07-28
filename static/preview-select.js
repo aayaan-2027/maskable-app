@@ -70,7 +70,7 @@
       if (!state) return;
       e.preventDefault();
       const { x, y } = pageCoordsFromEvent(e);
-      const { startX, startY } = state;
+      const { startX, startY, rect } = state;
       const l = Math.min(startX, x), t = Math.min(startY, y);
       const r = Math.max(startX, x), b = Math.max(startY, y);
 
@@ -104,8 +104,6 @@
       const box = document.createElement('button');
       box.className = 'preview-box preview-box--custom preview-box--selected';
       box.dataset.customId = id;
-      const originalWidth = parseInt(img.dataset.originalWidth || img.naturalWidth, 10);
-      const originalHeight = parseInt(img.dataset.originalHeight || img.naturalHeight, 10);
       const displayScaleX = img.clientWidth / originalWidth;
       const displayScaleY = img.clientHeight / originalHeight;
       box.style.left = (nl * displayScaleX) + 'px';
