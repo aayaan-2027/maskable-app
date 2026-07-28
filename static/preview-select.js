@@ -56,11 +56,10 @@
     function onMove(e) {
       if (!state) return;
       e.preventDefault();
-      const { rect, startX, startY } = state;
-      const clientX = (e.touches && e.touches.length) ? e.touches[0].clientX - rect.left : e.clientX - rect.left;
-      const clientY = (e.touches && e.touches.length) ? e.touches[0].clientY - rect.top : e.clientY - rect.top;
-      const l = Math.min(startX, clientX), t = Math.min(startY, clientY);
-      const w = Math.abs(clientX - startX), h = Math.abs(clientY - startY);
+      const { x, y } = pageCoordsFromEvent(e);
+      const { startX, startY } = state;
+      const l = Math.min(startX, x), t = Math.min(startY, y);
+      const w = Math.abs(x - startX), h = Math.abs(y - startY);
       selEl.style.left = l + 'px';
       selEl.style.top = t + 'px';
       selEl.style.width = w + 'px';
@@ -70,11 +69,10 @@
     function onUp(e) {
       if (!state) return;
       e.preventDefault();
-      const { rect, startX, startY } = state;
-      const clientX = (e.changedTouches && e.changedTouches.length) ? e.changedTouches[0].clientX - rect.left : (e.clientX - rect.left);
-      const clientY = (e.changedTouches && e.changedTouches.length) ? e.changedTouches[0].clientY - rect.top : (e.clientY - rect.top);
-      const l = Math.min(startX, clientX), t = Math.min(startY, clientY);
-      const r = Math.max(startX, clientX), b = Math.max(startY, clientY);
+      const { x, y } = pageCoordsFromEvent(e);
+      const { startX, startY } = state;
+      const l = Math.min(startX, x), t = Math.min(startY, y);
+      const r = Math.max(startX, x), b = Math.max(startY, y);
 
       if (selEl && selEl.parentNode) selEl.parentNode.removeChild(selEl);
       window.removeEventListener('mousemove', onMove);
