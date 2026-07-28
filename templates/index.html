@@ -13,17 +13,6 @@
 
 <div class="grain"></div>
 
-<!-- <header class="topbar">
-  <div class="topbar__mark">
-    <span class="topbar__bracket">[</span>REDACTOR<span class="topbar__bracket">]</span>
-  </div>
-
-  <div class="topbar__meta">
-    OCR:<span class="pill{% if 'urd' in ocr_languages or 'ara' in ocr_languages %} pill--on{% endif %}">{{ ocr_languages }}</span>{% if ner_active %}<span class="pill pill--on">NER model active</span>{% else %}<span class="pill">regex &amp; layout detection only</span>{% endif %}
-  </div>
-</header>
-<div class="topbar-underline"></div> -->
-
 <main class="layout">
 
 <!-- STEP 1: upload -->
@@ -89,7 +78,7 @@
     </div>
   </section>
 
-  <!-- STEP 2: review detected fields (hidden until /extract returns) -->
+  <!-- STEP 2: review & redact -->
   <section id="step-review" class="panel step" hidden>
       <div class="review-hero">
         <div>
@@ -103,7 +92,7 @@
         <div class="fields__legend">Document Preview</div>
         <div id="preview-container" class="preview-container" aria-label="Document preview"></div>
         <p class="subhead preview-note">Draw a box on the preview to select a custom redaction area.</p>
-        <p class="subhead preview-meta">Processed in memory · originals deleted immediately after OCR · session data expires after 30 minutes</p>
+        <p class="subhead preview-meta">Processed in memory · session data expires after 30 minutes</p>
       </div>
 
       <aside class="review-sidebar">
@@ -124,7 +113,6 @@
   </svg>
   <span class="btn-primary__label">Mask document</span>
 </button>
-          </button>
         </div>
       </aside>
     </div>

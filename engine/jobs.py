@@ -35,26 +35,6 @@ def load_page_image(base_dir, job_id, page_idx):
     return Image.open(os.path.join(job_dir(base_dir, job_id), f"page_{page_idx}.png"))
 
 
-def save_ocr_data(base_dir, job_id, pages_words_lines):
-    """pages_words_lines: list of (words, lines, img_w, img_h) per page."""
-    d = job_dir(base_dir, job_id)
-    serializable = [
-        {"words": words, "lines": lines, "img_w": img_w, "img_h": img_h}
-        for words, lines, img_w, img_h in pages_words_lines
-    ]
-    with open(os.path.join(d, "ocr_data.json"), "w") as f:
-        json.dump(serializable, f)
-
-
-def load_ocr_data(base_dir, job_id):
-    path = os.path.join(job_dir(base_dir, job_id), "ocr_data.json")
-    if not os.path.exists(path):
-        return None
-    with open(path) as f:
-        raw = json.load(f)
-    return [(p["words"], p["lines"], p["img_w"], p["img_h"]) for p in raw]
-
-
 def save_instances(base_dir, job_id, instances, num_pages):
     d = job_dir(base_dir, job_id)
     with open(os.path.join(d, "instances.json"), "w") as f:

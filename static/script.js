@@ -7,7 +7,6 @@
   const stepUpload = document.getElementById("step-upload");
   const stepReview = document.getElementById("step-review");
   const reviewSubhead = document.getElementById("review-subhead");
-  const instructionsEl = document.getElementById("instructions");
   const previewContainer = document.getElementById("preview-container");
   const maskBtn = document.getElementById("mask-btn");
   const backBtn = document.getElementById("back-btn");
@@ -16,9 +15,6 @@
   const maskStatus = document.getElementById("mask-status");
 
   let currentJobId = null;
-
-  // The review workflow is now preview-first and custom-draw only.
-  const DEFAULT_ON_CATEGORIES = new Set();
 
   // ---------- dropzone ----------
   dropzone.addEventListener("click", () => fileInput.click());
@@ -49,7 +45,7 @@
 
   // ---------- step 1: extract ----------
   async function extractFields(file) {
-    setStatus(uploadStatus, "Scanning document and detecting fields…", "loading");
+    setStatus(uploadStatus, "Processing PDF preview…", "loading");
     dropzone.classList.add("dropzone--busy");
 
     const formData = new FormData();
@@ -93,11 +89,6 @@
     reviewSubhead.textContent = data.num_pages
       ? `${data.num_pages} page(s) scanned. Draw a box on the preview to create a custom redaction.`
       : "Draw a box on the preview to create a custom redaction.";
-  }
-
-  function truncate(s, n = 42) {
-    if (!s) return "";
-    return s.length > n ? s.slice(0, n) + "…" : s;
   }
 
   function updateUndoRedoButtons() {
@@ -146,7 +137,6 @@
     stepUpload.hidden = false;
     fileInput.value = "";
     fileNameEl.textContent = "";
-    instructionsEl.value = "";
     setStatus(maskStatus, "", null);
     currentJobId = null;
     if (window._previewSelect?.clearCustomBboxes) {
@@ -160,11 +150,10 @@
 
   async function runMaskAction(source) {
     if (!currentJobId) return;
-    const instructions = instructionsEl ? instructionsEl.value.trim() : "";
     const customBboxes = window._previewSelect?.getCustomBboxes?.() || [];
 
-    if (!instructions && customBboxes.length === 0) {
-      setStatus(maskStatus, "Draw a box or describe what to mask first.", "error");
+    if (customBboxes.length === 0) {
+      setStatus(maskStatus, "Draw a box to mask before downloading.", "error");
       return;
     }
 
@@ -177,10 +166,6 @@
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           job_id: currentJobId,
-          group_ids: [],
-          instance_ids: [],
-          selected_boxes: [],
-          instructions,
           custom_bboxes: customBboxes,
         }),
       });
