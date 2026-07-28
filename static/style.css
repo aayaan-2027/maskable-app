@@ -240,19 +240,6 @@ body {
   box-shadow: 0 16px 36px rgba(2, 8, 23, 0.22);
 }
 
-.feature-grid .feature-card + .feature-card {
-  position: relative;
-}
-
-.feature-grid .feature-card + .feature-card::before {
-  content: "";
-  position: absolute;
-  top: -10px;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(125, 211, 252, 0.7), transparent);
-}
 
 .feature-number {
   display: inline-flex;
