@@ -74,13 +74,16 @@ def extract():
     # small PNG previews for frontend overlay; encoded as data URLs
     try:
         page_previews = [_encode_page_preview(img, width=900) for img in page_images]
+        page_sizes = [{"width": img.width, "height": img.height} for img in page_images]
     except Exception:
         page_previews = []
+        page_sizes = []
 
     return jsonify({
         "job_id": job_id,
         "num_pages": len(page_images),
         "page_previews": page_previews,
+        "page_sizes": page_sizes,
     })
 
 

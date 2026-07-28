@@ -106,12 +106,15 @@
 
     for (let pageIndex = 0; pageIndex < previews.length; pageIndex++) {
       const src = previews[pageIndex];
+      const pageSize = data.page_sizes?.[pageIndex] || {};
       const pageEl = document.createElement("div");
       pageEl.className = "preview-page";
       pageEl.dataset.page = pageIndex;
       const img = document.createElement("img");
       img.className = "preview-image";
       img.src = src;
+      if (pageSize.width) img.dataset.originalWidth = pageSize.width;
+      if (pageSize.height) img.dataset.originalHeight = pageSize.height;
       pageEl.appendChild(img);
       previewContainer.appendChild(pageEl);
     }

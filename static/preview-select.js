@@ -83,12 +83,14 @@
       window.removeEventListener('touchend', onUp);
       state = null;
 
-      const sx = img.naturalWidth / rect.width;
-      const sy = img.naturalHeight / rect.height;
+      const originalWidth = parseInt(img.dataset.originalWidth || img.naturalWidth, 10);
+      const originalHeight = parseInt(img.dataset.originalHeight || img.naturalHeight, 10);
+      const sx = originalWidth / rect.width;
+      const sy = originalHeight / rect.height;
       const nl = Math.max(0, Math.round(l * sx));
       const nt = Math.max(0, Math.round(t * sy));
-      const nr = Math.min(img.naturalWidth, Math.round(r * sx));
-      const nb = Math.min(img.naturalHeight, Math.round(b * sy));
+      const nr = Math.min(originalWidth, Math.round(r * sx));
+      const nb = Math.min(originalHeight, Math.round(b * sy));
       if (nr - nl < 4 || nb - nt < 4) return;
 
       const pageAttr = previewPageEl.dataset.page;
