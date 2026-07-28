@@ -349,7 +349,7 @@ body {
   margin: 0;
   font-size: 13px;
   line-height: 1.6;
-  color: var(--text-muted);
+  color: #e2e8f0;
 }
 
 .preview-wrapper {
@@ -528,14 +528,14 @@ body {
 
 .preview-note {
   margin-top: 16px;
-  color: var(--text-muted);
+  color: #e2e8f0;
   font-size: 14px;
   line-height: 1.7;
 }
 
 .preview-meta {
   margin-top: 8px;
-  color: var(--text-muted);
+  color: #cbd5e1;
   font-size: 12px;
   line-height: 1.6;
 }

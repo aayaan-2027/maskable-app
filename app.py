@@ -3,6 +3,7 @@ import io
 import os
 import uuid
 
+from PIL import Image
 from flask import Flask, request, render_template, send_file, jsonify, after_this_request
 from werkzeug.exceptions import RequestEntityTooLarge
 
@@ -27,8 +28,10 @@ def handle_request_entity_too_large(error):
 
 
 def _encode_page_preview(image, width=900):
+    preview = image.copy()
+    preview.thumbnail((width, width * 20), Image.LANCZOS)
     buffer = io.BytesIO()
-    image.save(buffer, format="PNG")
+    preview.save(buffer, format="PNG")
     encoded = base64.b64encode(buffer.getvalue()).decode("ascii")
     return f"data:image/png;base64,{encoded}"
 
