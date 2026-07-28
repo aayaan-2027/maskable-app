@@ -5,7 +5,7 @@ Minimal PDF page conversion helper for manual redaction.
 
 from pdf2image import convert_from_path
 
-DPI = 150
+DPI = 100
 
 
 def pdf_to_images(pdf_path: str, dpi: int = DPI):

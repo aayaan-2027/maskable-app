@@ -16,10 +16,7 @@ os.makedirs(UPLOAD_DIR, exist_ok=True)
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 os.makedirs(os.path.join(BASE_DIR, "jobs"), exist_ok=True)
 
-MAX_CONTENT_LENGTH = 26 * 1024 * 1024  # 25 MB file + small multipart overhead buffer
-
 app = Flask(__name__)
-app.config["MAX_CONTENT_LENGTH"] = MAX_CONTENT_LENGTH
 
 
 @app.errorhandler(RequestEntityTooLarge)
@@ -73,7 +70,7 @@ def extract():
     jobs.save_instances(BASE_DIR, job_id, [], len(page_images))
     # small PNG previews for frontend overlay; encoded as data URLs
     try:
-        page_previews = [_encode_page_preview(img, width=900) for img in page_images]
+        page_previews = [_encode_page_preview(img, width=700) for img in page_images]
         page_sizes = [{"width": img.width, "height": img.height} for img in page_images]
     except Exception:
         page_previews = []
