@@ -382,6 +382,14 @@ body {
   color: var(--text-muted);
 }
 
+.dropzone__meta {
+  margin-top: 10px;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  opacity: 0.9;
+}
+
 .dropzone__browse {
   color: var(--accent);
   font-weight: 600;
