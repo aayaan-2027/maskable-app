@@ -159,8 +159,10 @@
         const box = document.createElement('button');
         box.className = 'preview-box preview-box--custom preview-box--selected';
         box.dataset.customId = cb.id;
-        const displayScaleX = img.clientWidth / img.naturalWidth;
-        const displayScaleY = img.clientHeight / img.naturalHeight;
+        const originalWidth = parseInt(img.dataset.originalWidth || img.naturalWidth, 10);
+        const originalHeight = parseInt(img.dataset.originalHeight || img.naturalHeight, 10);
+        const displayScaleX = img.clientWidth / originalWidth;
+        const displayScaleY = img.clientHeight / originalHeight;
         const [nl, nt, nr, nb] = cb.bbox;
         box.style.left = (nl * displayScaleX) + 'px';
         box.style.top = (nt * displayScaleY) + 'px';
