@@ -472,7 +472,7 @@ body {
   font-family: var(--font-mono);
   font-size: 11px;
   letter-spacing: 0.18em;
-  color: var(--text-muted);
+  color: var(--text);
   display: block;
   margin-bottom: 16px;
   text-transform: uppercase;
